@@ -1,0 +1,66 @@
+  Table of Contents
+================================================================================
+ 1) Configuration
+ 2) Running Rover
+ 3) Stability Issues
+ 4) Web Rover
+
+
+  Configuration Changes/Improvements
+================================================================================
+- It makes more sense to have the VCS method be the first entry in the config
+    file, a la
+
+    cvs, acme/test/app, HEAD
+
+    This reads better, is more logical, and allows for additional fields to be
+    added without making the entry look awkward (such as the SVN backend!).
+
+- The CVS backend does not allow projects to checkout from more than one CVS
+    repository, which stands at odds with the general idea of rover.  Similarly
+    to SVN, it seems like it would be possible to add a CVSROOT field to the
+    config file.
+
+    How we prompt the user for passwords (as needed) is something that can be
+    identified at a later time.  Storing passwords in the config is not a great
+    idea.
+
+- Instead of having to edit __init__.py whenever a new backend is added, it
+    would be much more convenient to have it simply parse the backends dir
+    and grab naming information from either the file or the class.
+
+- Give examples of checking out from multiple branches within the same module.
+
+- Documentation.  For everything.  Especially the core rover scripts.
+
+
+  Version Control Systems
+================================================================================
+- The more the merrier.
+    * Bazaar
+    * Mercurial
+    * SVK
+    etc.
+
+- Take suggestions from future users, setup path with which users can suggest
+    or submit new backends to support additional VCSs.
+
+
+  Stability Issues
+================================================================================
+- Wrap errors with nicer messages, perhaps using one of the dozens of error
+    modules currently available for Python.
+
+- Test rover with varying forms of Python; currently, Python 2.5 and 2.6 are the
+    only major versions known to work, and tested accordingly.
+
+- Add checks to see if the version control systems are even on the system; i.e.,
+    if attempting to checkout from git, display an appropriate error and a link
+    to where it can be downloaded.
+
+
+  Web Rover
+================================================================================
+- Add CherryPy as a requirement
+
+- Create configuration file to set port number.

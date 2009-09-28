@@ -21,42 +21,31 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-# template for rover.config package -- stores local configuration
-# information for rover (eg the config directory)
+import unittest
+import rover.config
 
-import os
-
-config_dir = os.path.abspath('.rover')
-
-REPO_FILE_NAME = "REPOS"
-
-class RepoInfo(object):
-    """Structured data for a configured repo."""
-    def __init__(self, repoline):
-        print "repoline = '%s'" % repoline
-        repoline.strip()
-        if len(repoline) == 0 or repoline[0] == '#':
-            # blank or commented line, skip it
-            return
-        parts = repoline.split(',')
-
-        self.name = parts[0].strip()
-        self.vcs = parts[1].strip()
-        self.uri = parts[2].strip()
+from StringIO import StringIO
 
 
-def open_repofile(path):
-    filename = os.path.join(path, REPO_FILE_NAME)
-    return open(filename)
+class RepoInfoTest(unittest.TestCase):
+    def test_github_repo_info(self):
+        repo = rover.config.RepoInfo("github, git, git://github.com/")
+        self.assertEqual("github", repo.name)
+        self.assertEqual("git", repo.vcs)
+        self.assertEqual("git://github.com/", repo.uri)
 
-def parse_repos(repofile):
-    """Get repos from an open file."""
-    repos = []
-    for line in repofile:
-        line = line.strip()
-        if len(line) == 0 or line[0] == '#':
-            # blank or commented line, skip it
-            continue
-        repos.append(RepoInfo(line))
-    return repos
+
+
+BASIC_REPOS_TEST_CASE = """
+github, git, git://github.com/
+  # verification comment
+tigris, svn, svn://tigris.com/
+sourceforge, cvs, :pserver:cvs.sourceforge.net:2401/cvsroot/
+"""
+
+class ParseRepoTest(unittest.TestCase):
+    def test_basic_parse_repos(self):
+        repos = rover.config.parse_repos(StringIO(BASIC_REPOS_TEST_CASE))
+
+        self.assertEqual(3, len(repos))
 

@@ -135,7 +135,7 @@ class Rover:
         try:
             file = open(filename)
         except IOError, e:
-            print "Unable to open config file `%s'" % config_name
+            print "Unable to open config file `%s'" % filename
             exit(1)
 
         config_items = self.parse_config(file)

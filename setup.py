@@ -41,7 +41,7 @@ setup(
         author = "Wireless Generation",
         author_email = "github@wgen.net",
         url = "http://github.com/wgen/rover",
-        license = "Unknown",
+        license = "MIT",
         keywords = "cvs svn rover checkout vcs",
 
 

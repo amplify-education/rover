@@ -34,10 +34,13 @@ class RepoInfo(object):
     """Structured data for a configured repo."""
     def __init__(self, repoline):
         print "repoline = '%s'" % repoline
-        repoline.strip()
-        if len(repoline) == 0 or repoline[0] == '#':
-            # blank or commented line, skip it
-            return
+        repoline = repoline.strip()
+        if len(repoline) == 0:
+            # blank line, fail
+            raise Exception("Cannot initialize RepoInfo for blank line")
+        elif repoline[0] == '#':
+            # commented line, fail
+            raise Exception("Cannot initialize RepoInfo for commented line")
         parts = repoline.split(',')
 
         self.name = parts[0].strip()

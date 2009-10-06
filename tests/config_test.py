@@ -34,6 +34,25 @@ class RepoInfoTest(unittest.TestCase):
         self.assertEqual("git", repo.vcs)
         self.assertEqual("git://github.com/", repo.uri)
 
+    def test_repo_info_for_comment(self):
+        "RepoInfo() for a commented line fails"
+        try:
+            repo = rover.config.RepoInfo("  # comment line")
+        except Exception, x:
+            self.assertEqual('Cannot initialize RepoInfo for commented line' \
+                    , str(x))
+        else:
+            self.fail("Commented repo line should have thrown an exception")
+
+    def test_repo_info_on_blank(self):
+        "RepoInfo() for a blank line fails"
+        try:
+            repo = rover.config.RepoInfo("  ")
+        except Exception, x:
+            self.assertEqual('Cannot initialize RepoInfo for blank line' \
+                    , str(x))
+        else:
+            self.fail("Blank repo line should have thrown an exception")
 
 
 BASIC_REPOS_TEST_CASE = """

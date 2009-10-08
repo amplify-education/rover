@@ -29,7 +29,6 @@ from StringIO import StringIO
 import unittest
 
 from rover import Rover
-import rover.util
 import rover.backends.rcvs
 import rover.backends.rsvn
 
@@ -749,77 +748,6 @@ class RoverFilterTestCase(unittest.TestCase):
                     ('acme/app/test/java', 'HEAD', 'cvs')])
 
         self.assertEquals(r.config_items, expected)
-
-
-class RoverUtilTestCase(unittest.TestCase):
-
-    def test_return_codes(self):
-        """
-        test that return codes are returned and work correctly
-        """
-        returncode = rover.util.run_silent("true")
-        self.assertEquals(returncode, 0)
-
-        returncode = rover.util.run("true")
-        self.assertEquals(returncode, 0)
-
-        returncode, output = rover.util.tee_silent("true")
-        self.assertEquals(returncode, 0)
-
-        returncode, output = rover.util.tee("true")
-        self.assertEquals(returncode, 0)
-
-
-        returncode = rover.util.run_silent("false")
-        self.assertEquals(returncode, 1)
-
-        returncode = rover.util.run("false")
-        self.assertEquals(returncode, 1)
-
-        returncode, output = rover.util.tee_silent("false")
-        self.assertEquals(returncode, 1)
-
-        returncode, output = rover.util.tee("false")
-        self.assertEquals(returncode, 1)
-
-    def test_capture_output(self):
-        """
-        test that the tee* methods capture output
-        """
-        returncode, out = rover.util.tee('echo "."')
-        self.assertEquals(out, ['.'])
-        self.assertEquals(returncode, 0)
-
-        returncode, out = rover.util.tee_silent('echo "."')
-        self.assertEquals(out, ['.'])
-        self.assertEquals(returncode, 0)
-
-    def test_execute(self):
-        """
-        make sure the verbose and return_out keyword args
-        do what we expect them to do
-        """
-        returncode, out = rover.util.execute('echo "."', verbose=True, return_out=True)
-        self.assertEquals(out, ['.'])
-        self.assertEquals(returncode, 0)
-
-        returncode = rover.util.execute('echo "."', verbose=True, return_out=False)
-        self.assertEquals(returncode, 0)
-
-        returncode, out = rover.util.execute('echo "."', verbose=False, return_out=True)
-        self.assertEquals(out, ['.'])
-        self.assertEquals(returncode, 0)
-
-        returncode = rover.util.execute('echo "."', verbose=False, return_out=False)
-        self.assertEquals(returncode, 0)
-
-    def test_testmode(self):
-        """
-        make sure test_mode=True doesn't execute the command
-        """
-        returncode, out = rover.util.execute('echo "."', verbose=True, return_out=True, test_mode=True)
-        self.assertEquals(out, [])
-        self.assertEquals(returncode, 0)
 
 
 

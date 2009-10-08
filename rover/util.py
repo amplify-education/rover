@@ -50,7 +50,7 @@ def tee(cmd, cwd=None):
 
     # if the command ends with a newline, don't
     # include that blank line in the output
-    if output[-1] == '':
+    if len(output) > 0 and output[-1] == '':
         output = output[:-1]
 
     # return (exitcode, list of output+error lines)
@@ -78,7 +78,7 @@ def tee_silent(cmd, cwd=None):
 
     # if the command ends with a newline, don't
     # include that blank line in the output
-    if output[-1] == '':
+    if len(output) > 0 and output[-1] == '':
         output = output[:-1]
 
     # return (exitcode, list of output+error lines)

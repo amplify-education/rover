@@ -42,10 +42,10 @@ class Shell(object):
             if pipe.poll() is not None:
                 break
 
-            x = pipe.stdout.readline()
-            x = x.strip()
-            print x
-            output.append(x)
+            x = pipe.stdout.readline().strip()
+            if len(x) > 0:
+                print x
+                output.append(x)
 
         # get any remaining output
         output += [line.strip() for line in pipe.stdout.readlines()]

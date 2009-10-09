@@ -23,10 +23,9 @@
 
 import os
 import re
-import shutil
 import types
 
-from rover import util
+from rover import shell
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 class GitFactory(RoverItemFactory):
@@ -89,6 +88,7 @@ class GitItem(RoverItem):
             cwd = checkout_dir
 
         git_dir = os.path.join(cwd,self.repo_name)
+        sh = shell.Shell()
 
         if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
             cmd = ['git']
@@ -100,24 +100,24 @@ class GitItem(RoverItem):
             if not test_mode and not os.path.exists(cwd):
                 os.makedirs(cwd)
 
-            util.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
+            sh.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
 
         else:
             # under clean mode, reset local changes
             if checkout_mode == 'clean':
                 # First, reset to revision
-                util.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
+                sh.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
 
                 # Then get rid of any lingering local changes that
                 #   will disrupt our pull
-                util.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
+                sh.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
 
             # Finally, do the pull!
             cmd = ['git pull']
             if not verbose:
                 cmd.append('-q')
 
-            util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+            sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
 
         # Check out the branch in question!
@@ -137,7 +137,7 @@ class GitItem(RoverItem):
         #
         cmd.append("origin/%s" % self.refspec)
 
-        util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+        sh.execute(cmd, cwd=cwd, verbose=verbose, test_mode=test_mode)
 
     def get_path(self):
         """

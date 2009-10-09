@@ -26,7 +26,7 @@ import re
 import shutil
 import types
 
-from rover import util
+from rover import shell
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 class CVSFactory(RoverItemFactory):
@@ -87,7 +87,7 @@ class CVSFactory(RoverItemFactory):
     def _get_modules_content(self):
         if self._aliases is None:
             cmd = 'cvs -Q -d %s checkout -p -A CVSROOT/modules' % os.environ['CVSROOT']
-            exitcode, aliases = util.tee_silent(cmd)
+            exitcode, aliases = shell.Shell().tee_silent(cmd)
             self._aliases = '\n'.join(aliases)
         return self._get_aliases()
 
@@ -162,8 +162,10 @@ class CVSItem(RoverItem):
             # then use !directory/path to exclude portions
             cmd.append(self.module)
             cmd.extend(['!%s' % exclude for exclude in self.excludes])
-        
-        return_code, out = util.execute(cmd, cwd=checkout_dir, verbose=verbose, test_mode=test_mode, return_out=True)
+
+        sh = shell.Shell()
+        return_code, out = sh.execute(cmd, cwd=checkout_dir
+                , verbose=verbose, test_mode=test_mode, return_out=True)
 
         if return_code != 0:
             # sometimes CVS screws up when replacing old files. the known
@@ -190,7 +192,8 @@ class CVSItem(RoverItem):
 
                     shutil.move(old, new)
 
-            out = util.execute(cmd, cwd=checkout_dir, verbose=verbose, test_mode=test_mode)
+            out = sh.execute(cmd, cwd=checkout_dir, verbose=verbose
+                    , test_mode=test_mode)
 
     def get_path(self):
         """

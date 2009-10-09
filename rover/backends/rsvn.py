@@ -23,9 +23,8 @@
 
 import os
 import re
-import shutil
 
-from rover import util
+from rover import shell
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 class SVNFactory(RoverItemFactory):
@@ -66,12 +65,14 @@ class SVNItem(RoverItem):
         if not verbose:
             cmd.append('-Q')
 
+        sh = shell.Shell()
         update_mode = True
         if os.path.exists(os.path.join(checkout_dir, self.get_path())):
             if checkout_mode == 'clean':
                 sub_cmd = ['svn revert -R']
                 sub_cmd.append(os.path.join(checkout_dir, self.get_path()))
-                return_code, out = util.execute(sub_cmd, cwd=checkout_dir, return_out=True, test_mode=test_mode)
+                return_code, out = sh.execute(sub_cmd, cwd=checkout_dir
+                        , return_out=True, test_mode=test_mode)
             cmd.append('update')
             cmd.append(self.get_path())
         else:
@@ -83,7 +84,8 @@ class SVNItem(RoverItem):
 
 
         cmd = ' '.join(cmd)
-        return_code, out = util.execute(cmd, cwd=checkout_dir, return_out=True, test_mode=test_mode)
+        return_code, out = sh.execute(cmd, cwd=checkout_dir
+                , return_out=True, test_mode=test_mode)
 
     def get_path(self):
         """
@@ -204,7 +206,8 @@ def list_contents(path, root):
     @return list of relative paths rooted at "root"
     """
     cmd = "svn ls %s/%s" % (root, path)
-    code, out = util.execute(cmd, return_out=True)
+    sh = shell.Shell()
+    code, out = sh.execute(cmd, return_out=True)
     dirs = out.strip().split('\n')
     return dirs
 

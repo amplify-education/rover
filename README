@@ -1,0 +1,29 @@
+Welcome to Rover!
+ 
+==================
+| Install |
+==================
+Rover comes equipped with setuptools, which allows for an easy install.
+ 
+    1. python setup.py build
+    2. python setup.py install
+        *nix users will need to be root (sudo, su, etc.)
+    3. Type "rover" in a terminal to see if the install has completed successfully!
+ 
+==================
+| About |
+==================
+ 
+Rover is a Python tool for checking out code across heterogeneous version control repositories. Currently, the following SCMs are supported
+ 
+    * cvs
+    * svn
+    * git (beta)
+ 
+Contributors are always welcome to add their own additions. The following are potential extensions:
+ 
+    * Mercurial
+    * Bazaar
+    * SVK
+ 
+And more! If you use it, you can write a backend. Take a look at rover/backends/ for some examples; the rgit.py, rcvs.py, and rsvn.py are all great examples, and the syntax is easy to read.

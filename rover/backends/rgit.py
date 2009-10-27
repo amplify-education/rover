@@ -65,9 +65,9 @@ class GITItem(RoverItem):
 
         if not os.path.exists( os.path.join(cwd, '.git') ):
             cmd = ['git']
+            cmd.append('clone')
             if not verbose:
                 cmd.append('-q')
-            cmd.append('clone')
             cmd.append(self.module)
 
             if not test_mode and not os.path.exists(cwd):
@@ -76,16 +76,16 @@ class GITItem(RoverItem):
             util.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
 
         cmd = ['git']
+        cmd.append('checkout')
 
         if not verbose:
             cmd.append('-q')
 
-        cmd.append('checkout')
-        cmd.append(self.revision)
-
         # If checkout_mode is clean, throw away local changes
         if checkout_mode == 'clean':
             cmd.append('-f')
+
+        cmd.append(self.revision)
 
         util.execute(cmd, cwd=cwd, verbose=verbose, test_mode=test_mode)
 

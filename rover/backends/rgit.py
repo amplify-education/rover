@@ -60,6 +60,9 @@ class GITItem(RoverItem):
         self.revision = revision
         self.repo_name, ignore = os.path.splitext( os.path.basename(module) )
 
+        if ' !' in module:
+            raise Exception("excludes are not allowed in git: %s" % module)
+
     def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
         cwd = os.path.join(checkout_dir, self.repo_name)
 
@@ -99,8 +102,8 @@ class GITItem(RoverItem):
         return self.repo_name
 
     def exclude(self, path):
-        # Does nothing, because you can't ignore
-        # paths/files/whatever in git
+        # Will never return anything; this is handled in
+        #   the ctor; an exception is raised, as such
         pass
 
     def expand(self):

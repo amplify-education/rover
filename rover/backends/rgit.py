@@ -102,8 +102,8 @@ class GITItem(RoverItem):
         return self.repo_name
 
     def exclude(self, path):
-        # Will never return anything; this is handled in
-        #   the ctor; an exception is raised, as such
+        # git does not support excludes
+        raise Exception("excludes are not allowed in git: %s" % module)
         pass
 
     def expand(self):

@@ -30,17 +30,17 @@ import unittest
 
 from rover import Rover
 import rover.util
-import rover.rcvs
-import rover.rsvn
+import rover.backends.rcvs
+import rover.backends.rsvn
 
 
 def _list_as_rover_items(items):
     out = []
     for line in items:
         if line[2] == 'cvs':
-            out.extend(rover.rcvs.CVSFactory().get_rover_items(line))
+            out.extend(rover.backends.rcvs.CVSFactory().get_rover_items(line))
         elif line[2] == 'svn':
-            out.extend(rover.rsvn.SVNFactory().get_rover_items(line))
+            out.extend(rover.backends.rsvn.SVNFactory().get_rover_items(line))
     return out
 
 def mock_os_walk_factory(dir):
@@ -518,7 +518,7 @@ acme_webapp \
 webapp_poc
 """
     def setUp(self):
-        self.cvs_fact = rover.rcvs.CVSFactory()
+        self.cvs_fact = rover.backends.rcvs.CVSFactory()
         self.cvs_fact._aliases = self.modules_content
 
     def test_cvs_modules_parser(self):
@@ -573,7 +573,7 @@ webapp_poc
 """
     modules_content = re.sub('\n', '\r\n', modules_content)
     def setUp(self):
-        self.cvs_fact = rover.rcvs.CVSFactory()
+        self.cvs_fact = rover.backends.rcvs.CVSFactory()
         self.cvs_fact._aliases = self.modules_content
 
     def test_cvs_modules_parser(self):
@@ -597,15 +597,15 @@ webapp_poc
 class RoverSVNTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.old_list_contents = rover.rsvn.list_contents
+        self.old_list_contents = rover.backends.rsvn.list_contents
 
         def new_list_contents(path, root):
             return self.list_contents[path]
 
-        rover.rsvn.list_contents = new_list_contents
+        rover.backends.rsvn.list_contents = new_list_contents
 
     def tearDown(self):
-        rover.rsvn.list_contents = self.old_list_contents
+        rover.backends.rsvn.list_contents = self.old_list_contents
     
     def test_svn_exclude_naive(self):
 

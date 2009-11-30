@@ -31,9 +31,9 @@ from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 class CVSFactory(RoverItemFactory):
     
-    def __init__(self):
+    def __init__(self, aliases=None):
         # TODO: doc me
-        self._aliases = None
+        self._aliases = aliases
 
     def get_rover_items(self, config_line):
         """

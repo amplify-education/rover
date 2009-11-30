@@ -38,7 +38,7 @@ def _list_as_rover_items(items):
     out = []
     for line in items:
         if line[2] == 'cvs':
-            out.extend(rover.backends.rcvs.CVSFactory().get_rover_items(line))
+            out.extend(rover.backends.rcvs.CVSFactory(aliases='').get_rover_items(line))
         elif line[2] == 'svn':
             out.extend(rover.backends.rsvn.SVNFactory().get_rover_items(line))
     return out
@@ -518,7 +518,7 @@ acme_webapp \
 webapp_poc
 """
     def setUp(self):
-        self.cvs_fact = rover.backends.rcvs.CVSFactory()
+        self.cvs_fact = rover.backends.rcvs.CVSFactory(aliases='')
         self.cvs_fact._aliases = self.modules_content
 
     def test_cvs_modules_parser(self):
@@ -573,7 +573,7 @@ webapp_poc
 """
     modules_content = re.sub('\n', '\r\n', modules_content)
     def setUp(self):
-        self.cvs_fact = rover.backends.rcvs.CVSFactory()
+        self.cvs_fact = rover.backends.rcvs.CVSFactory(aliases='')
         self.cvs_fact._aliases = self.modules_content
 
     def test_cvs_modules_parser(self):

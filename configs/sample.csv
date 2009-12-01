@@ -8,4 +8,4 @@
 
 acme/test/app                   , HEAD      , cvs
 project9                        , bar_b     , svn , http://acme.com/svn
-acme.com:acme/plan3.git         , HEAD      , git
+acme.com:acme/app/plan3.git     , master    , git

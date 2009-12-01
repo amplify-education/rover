@@ -55,31 +55,71 @@ class GITFactory(RoverItemFactory):
         pass
 
 class GITItem(RoverItem):
-    def __init__(self, module, revision):
-        self.module = module
-        self.revision = revision
-        self.repo_name, ignore = os.path.splitext( os.path.basename(module) )
+    def __init__(self, repository, refspec):
+        self.repository = repository
+        self.refspec = refspec
 
-        if ' !' in module:
-            raise Exception("excludes are not allowed in git: %s" % module)
+        # Detect the two forms as per git's documentation
+        # TODO: Add support for local repos
+        result = re.match("^(rsync|ssh|git|http|https)://(?:.*?)/(.*)(?:\.git)?$", repository)
+
+        # If its not one of the above, it has to be SSH as follows
+        if result is None:
+            result = re.match("^(?:.*?@?).*:(.*?)(?:\.git)?$", repository)
+
+
+        # If result is still none, we weren't able to match anything...
+        if result is None:
+            raise Exception("malformed git connection string `%s'; please see `man git-clone' for supported connection strings." % repository)
+
+        # Separate repo and path
+        self.repo_path, self.repo_name = os.path.split( result.groups()[0] )
+
+        # Check for "excludes", because they're not allowed in git
+        if ' !' in repository:
+            raise Exception("excludes are not allowed in git: %s" % repository)
 
     def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
-        cwd = os.path.join(checkout_dir, self.repo_name)
+        # passing in preserve_dirs will be much more in depth; for now, assume its
+        #   always true!
+        preserve_dirs = True
+        if preserve_dirs:
+            cwd = os.path.join(checkout_dir, self.repo_path)
+        else:
+            cwd = checkout_dir
 
-        if not os.path.exists( os.path.join(cwd, '.git') ):
+        git_dir = os.path.join(cwd,self.repo_name)
+
+        if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
             cmd = ['git']
             cmd.append('clone')
             if not verbose:
                 cmd.append('-q')
-            cmd.append(self.module)
+            cmd.append(self.repository)
 
             if not test_mode and not os.path.exists(cwd):
                 os.makedirs(cwd)
 
             util.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
 
-        cmd = ['git']
-        cmd.append('checkout')
+        else:
+            # under clean mode, reset local changes
+            if checkout_mode == 'clean':
+                # First, reset to revision
+                util.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
+
+                # Then get rid of any lingering local changes that
+                #   will disrupt our pull
+                util.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
+
+            # Finally, do the pull!
+            cmd = ['git pull']
+            if not verbose:
+                cmd.append('-q')
+
+            util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+
+        cmd = ['git checkout']
 
         if not verbose:
             cmd.append('-q')
@@ -88,13 +128,13 @@ class GITItem(RoverItem):
         if checkout_mode == 'clean':
             cmd.append('-f')
 
-        cmd.append(self.revision)
+        cmd.append(self.refspec)
 
-        util.execute(cmd, cwd=cwd, verbose=verbose, test_mode=test_mode)
+        util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
     def get_path(self):
         """
-        return the path to the "module"; however, there is no module here,
+        return the path to the "repository"; however, there is no repository here,
         only the git checkout directory.  Therefor... check it all out into
         the working directory, until we can add a config option to specify
         otherwise.
@@ -103,7 +143,7 @@ class GITItem(RoverItem):
 
     def exclude(self, path):
         # git does not support excludes
-        raise Exception("excludes are not allowed in git: %s" % module)
+        raise Exception("excludes are not allowed in git: %s" % repository)
         pass
 
     def expand(self):

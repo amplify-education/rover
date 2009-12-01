@@ -59,6 +59,7 @@ class Rover:
         self.includes = []
         self.excludes = []
         self.revision = None
+        self.preserve_dirs = False
 
         self.config_lines = []
         self.config_items = []
@@ -68,6 +69,9 @@ class Rover:
         self.clobbers = []
 
         self._validate()
+
+    def set_preserve_dirs(self, preserve_dirs):
+        self.preserve_dirs = preserve_dirs
 
     def set_verbose(self, verbose):
         self.verbose = verbose

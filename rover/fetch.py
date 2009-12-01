@@ -38,6 +38,10 @@ def main():
         the order they are specified and treated as a single file. A revison
         can be added optionally after the '@', and that revision will be
         forced for all modules in that config file.""")
+    parser.add_option('-p', '--preserve-dirs',
+                      action="store_true",
+                      dest="preserve_dirs",
+                      help="(git only) preserve path to git repository; i.e., git@github.com:outer/space/plan9.git will be checked out to `outer/space/plan9/' instead of just `plan9/', which is default git behavior.")
     parser.add_option('-v', '--verbose',
                       action='store_true',
                       dest='verbose',
@@ -90,6 +94,7 @@ def main():
         r.set_manifest(opts.manifest_filename)
         r.set_excludes(opts.excludes)
         r.set_includes(opts.includes)
+        r.set_preserve_dirs(opts.preserve_dirs)
     except Exception, e:
         parser.print_help()
         print

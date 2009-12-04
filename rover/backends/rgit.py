@@ -119,6 +119,8 @@ class GITItem(RoverItem):
 
             util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
+
+        # Check out the branch in question!
         cmd = ['git checkout']
 
         if not verbose:
@@ -128,7 +130,12 @@ class GITItem(RoverItem):
         if checkout_mode == 'clean':
             cmd.append('-f')
 
-        cmd.append(self.refspec)
+        # Checkout the remote branch, always... we don't care about
+        #   local changes.  There should be NO local branches!
+        #
+        # FIXME: This will not work with tags!!!
+        #
+        cmd.append("origin/%s" % self.refspec)
 
         util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 

@@ -34,7 +34,7 @@ import config
 
 from backends.rcvs import CVSFactory
 from backends.rsvn import SVNFactory
-from backends.rgit import GITFactory
+from backends.rgit import GitFactory
 
 class Rover:
 
@@ -42,7 +42,7 @@ class Rover:
     factory_map = {
         'cvs': CVSFactory(),
         'svn': SVNFactory(),
-        'git': GITFactory()
+        'git': GitFactory()
     }
     
     def __init__(self, config_names, checkout_mode='preserve', checkout_dir=os.getcwd()):

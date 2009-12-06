@@ -29,13 +29,13 @@ import types
 from rover import util
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
-class GITFactory(RoverItemFactory):
+class GitFactory(RoverItemFactory):
     def __init__(self):
         pass
 
     def get_rover_items(self, config_line):
         module, revision = config_line[:2]
-        out = [GITItem(module, revision)]
+        out = [GitItem(module, revision)]
         return out
 
     def _is_alias(self, module):
@@ -54,7 +54,7 @@ class GITFactory(RoverItemFactory):
     def _get_aliases(self):
         pass
 
-class GITItem(RoverItem):
+class GitItem(RoverItem):
     def __init__(self, repository, refspec):
         self.repository = repository
         self.refspec = refspec
@@ -160,7 +160,7 @@ class GITItem(RoverItem):
         return [self]
 
     def narrow(self, path):
-        return GITItem(path, self.revision)
+        return GitItem(path, self.revision)
 
     def __repr__(self):
         return ''

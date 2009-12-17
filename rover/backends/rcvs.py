@@ -23,7 +23,6 @@
 
 import os
 import re
-import shutil
 import types
 
 from rover import shell
@@ -190,7 +189,7 @@ class CVSItem(RoverItem):
                     #if verbose:
                     print "* Backing up %(old)s to %(new)s" % locals()
 
-                    shutil.move(old, new)
+                    sh.move(old, new)
 
             out = sh.execute(cmd, cwd=checkout_dir, verbose=verbose
                     , test_mode=test_mode)

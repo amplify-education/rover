@@ -24,6 +24,7 @@
 import os
 import subprocess
 import types
+import shutil
 
 
 class Shell(object):
@@ -135,4 +136,8 @@ class Shell(object):
             return (0, [])
         else:
             return 0
+
+    def move(self, old_file, new_file):
+        """Rename a file."""
+        shutil.move(old_file, new_file)
 

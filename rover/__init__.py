@@ -31,6 +31,7 @@ import urllib2
 
 # module-relative import
 import config
+import rover.shell
 
 from backends.rcvs import CVSFactory
 from backends.rsvn import SVNFactory
@@ -240,6 +241,11 @@ class Rover:
         self.config_items = new_items
 
     def checkout(self):
+        """Checkout the repos gathered from the config file
+        """
+        # Create the shell object.  Eventually inject this as a param
+        # for testability.
+        sh = rover.shell.Shell()
         # Create the checkout directory if it doesn't exist
         if not os.path.exists(self.checkout_dir):
             os.makedirs(self.checkout_dir)
@@ -253,7 +259,8 @@ class Rover:
                     else:
                         print "REMOVING:", fullpath
                         shutil.rmtree(fullpath, True)
-            item.checkout(self.checkout_dir, self.checkout_mode, self.verbose, self.test_mode)
+            item.checkout(sh, self.checkout_dir, self.checkout_mode
+                    , self.verbose, self.test_mode)
 
 
     def apply_filters(self):

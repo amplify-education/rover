@@ -40,10 +40,11 @@ class RoverItem(object):
         """
         pass
 
-    def checkout(self, checkout_dir, checkout_mode, verbosity=1):
+    def checkout(self, sh, checkout_dir, checkout_mode, verbosity=1):
         """
         check out stuff
         TODO: add comments
+        @param sh:   A shell to execute the vcs commands
         """
         pass
 

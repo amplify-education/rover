@@ -61,7 +61,7 @@ class CVSFactory(RoverItemFactory):
         if module in aliases:
             return True
         return False
-                
+
     def _handle_excludes(self, modules):
         """
         return a list of module strings which is the set of
@@ -84,6 +84,8 @@ class CVSFactory(RoverItemFactory):
         return out
 
     def _get_modules_content(self):
+        """Not sure what this does.
+        """
         if self._aliases is None:
             cmd = 'cvs -Q -d %s checkout -p -A CVSROOT/modules' % os.environ['CVSROOT']
             exitcode, aliases = shell.Shell().tee_silent(cmd)
@@ -121,10 +123,13 @@ class CVSItem(RoverItem):
             self.module, self.excludes = self.module.split(' !', 1)
             self.excludes = map(lambda x: x.strip('!'), self.excludes.split())
 
-    def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
+    def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
+            , test_mode=False):
         """
         check out stuff
         TODO: add comments
+
+        sh => a shell object which should be used to make system calls
         """
         cmd = ['cvs']
 
@@ -162,7 +167,6 @@ class CVSItem(RoverItem):
             cmd.append(self.module)
             cmd.extend(['!%s' % exclude for exclude in self.excludes])
 
-        sh = shell.Shell()
         return_code, out = sh.execute(cmd, cwd=checkout_dir
                 , verbose=verbose, test_mode=test_mode, return_out=True)
 

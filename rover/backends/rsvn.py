@@ -52,10 +52,12 @@ class SVNItem(RoverItem):
         self.url = url
         self.excludes = []
 
-    def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
+    def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
+            , test_mode=False):
         """
         check out stuff
         TODO: add comments
+        @param sh:   A rover shell object
         """
         if self.excludes != []:
             raise Excepion('call expand before checkout')
@@ -65,7 +67,6 @@ class SVNItem(RoverItem):
         if not verbose:
             cmd.append('-Q')
 
-        sh = shell.Shell()
         update_mode = True
         if os.path.exists(os.path.join(checkout_dir, self.get_path())):
             if checkout_mode == 'clean':

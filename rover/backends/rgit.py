@@ -25,7 +25,6 @@ import os
 import re
 import types
 
-from rover import shell
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 class GitFactory(RoverItemFactory):
@@ -78,7 +77,11 @@ class GitItem(RoverItem):
         if ' !' in repository:
             raise Exception("excludes are not allowed in git: %s" % repository)
 
-    def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
+    def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
+            , test_mode=False):
+        """Rover checkout = git clone
+
+        sh => a shell through which rover should make system calls"""
         # passing in preserve_dirs will be much more in depth; for now, assume its
         #   always true!
         preserve_dirs = True
@@ -88,7 +91,6 @@ class GitItem(RoverItem):
             cwd = checkout_dir
 
         git_dir = os.path.join(cwd,self.repo_name)
-        sh = shell.Shell()
 
         if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
             cmd = ['git']

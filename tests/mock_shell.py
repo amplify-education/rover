@@ -21,11 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
-import types
-import re
-import sys
-import unittest
 
 
 class MockShell(object):

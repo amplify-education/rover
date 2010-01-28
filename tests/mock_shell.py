@@ -40,7 +40,7 @@ class MockShell(object):
         self.history = list()
         self.underflow_error = underflow_error
 
-    def seed_result(self, return_code, output=None)
+    def seed_result(self, return_code, output=None):
         """Test function to seed a result into the shell.
         
         Results are queued and returned in the order they are added."""
@@ -73,7 +73,7 @@ class MockShell(object):
     def execute(self, cmd, cwd=None, verbose=False, test_mode=False
             , return_out=False):
         """Mock version from rover.shell"""
-        pass
+        self.history.append(cmd)
 
     def move(self, old_file, new_file):
         """Mock version from rover.shell"""

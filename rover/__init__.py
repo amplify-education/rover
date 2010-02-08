@@ -198,8 +198,11 @@ class Rover:
             #  a previous step.
             fact = self.factory_map[line[2]]
             try:
-                config_items.extend(fact.get_rover_items(line))
+                item = fact.get_rover_items(line)
+                # print "item = %s" % str(item)
+                config_items.extend(item)
             except Exception, ex:
+                # print "exception parsing '%s'" % str(line)
                 self.config_errors.append("resolve error: %s" % ex)
 
         return config_items

@@ -44,8 +44,6 @@ class CVSFactory(RoverItemFactory):
           of e.g. CVS aliases
         """
         module, revision = config_line[:2]
-        if self._is_alias(module):
-            raise Exception("bad module (CVS aliases not allowed): %s" % module)
         out = []
         out.append(CVSItem(module, revision))
 
@@ -131,6 +129,10 @@ class CVSItem(RoverItem):
 
         sh => a shell object which should be used to make system calls
         """
+        # first there's a check for cvs whether this is a cvs module
+        # if self._is_alias(module):
+        #    raise Exception("bad module (CVS aliases not allowed): %s" % module)
+
         cmd = ['cvs']
 
         if not verbose:

@@ -188,10 +188,7 @@ class Rover:
                     self.config_errors.append('invalid config line: "%s"' % line)
                 else:
                     config_lines.append(tuple(item))
-        # FIXME: Should this be closed here? Seems messy... its not
-        #        really our file, so why are WE closing it?
-        file.close()
-       
+
         config_items = []
         for line in config_lines:
             # Get the RoverFactory that deals with the specified
@@ -201,8 +198,11 @@ class Rover:
             #  a previous step.
             fact = self.factory_map[line[2]]
             try:
-                config_items.extend(fact.get_rover_items(line))
+                item = fact.get_rover_items(line)
+                # print "item = %s" % str(item)
+                config_items.extend(item)
             except Exception, ex:
+                # print "exception parsing '%s'" % str(line)
                 self.config_errors.append("resolve error: %s" % ex)
 
         return config_items

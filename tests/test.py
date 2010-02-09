@@ -35,9 +35,12 @@ import rover.backends.rsvn
 
 def _list_as_rover_items(items):
     out = []
+    cvs_factory = rover.backends.rcvs.CVSFactory(aliases='')
     for line in items:
         if line[2] == 'cvs':
-            out.extend(rover.backends.rcvs.CVSFactory(aliases='').get_rover_items(line))
+            cvs_item = cvs_factory.get_rover_items(line)
+            # print "cvs_item = %s" % str(cvs_item)
+            out.extend(cvs_item)
         elif line[2] == 'svn':
             out.extend(rover.backends.rsvn.SVNFactory().get_rover_items(line))
     return out
@@ -123,7 +126,9 @@ acme/project9/module/rab, BAR_TAG_T, svn, http://example.com/trunk""")
                     ('acme/framework', 'FOO_BRANCH_B', 'cvs'),
                     ('acme/project9/module/rab', 'BAR_TAG_T', 'svn', 'http://example.com/trunk')])
         
-        self.assertEquals(expected, Rover('').parse_config(s))
+        output = Rover('').parse_config(s)
+        self.assertEquals(3, len(output))
+        self.assertEquals(expected, output)
 
 
 class RoverCleanTestCases(unittest.TestCase):

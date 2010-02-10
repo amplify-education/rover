@@ -31,6 +31,8 @@ class GitConnection(RoverItemFactory):
     def __init__(self, name, uri):
         self.name = name
         self.uri = uri
+        # possibly add assertions on uri format here.
+        # not sure if it's needed though.
 
     def get_rover_items(self, config_line):
         repo, branch = config_line[:2]
@@ -54,29 +56,16 @@ class GitConnection(RoverItemFactory):
         pass
 
 class GitRepo(RoverItem):
-    def __init__(self, name, uri, repo, branch):
-        self.repository = repository
-        self.refspec = refspec
-
-        # Detect the two forms as per git's documentation
-        # TODO: Add support for local repos
-        result = re.match("^(rsync|ssh|git|http|https)://(?:.*?)/(.*)(?:\.git)?$", repository)
-
-        # If its not one of the above, it has to be SSH as follows
-        if result is None:
-            result = re.match("^(?:.*?@?).*:(.*?)(?:\.git)?$", repository)
-
-
-        # If result is still none, we weren't able to match anything...
-        if result is None:
-            raise Exception("malformed git connection string `%s'; please see `man git-clone' for supported connection strings." % repository)
-
-        # Separate repo and path
-        self.repo_path, self.repo_name = os.path.split( result.groups()[0] )
+    def __init__(self, conn, uri, repo, treeish):
+        self.connection = conn
+        self.uri = uri
+        self.repository = repo
+        self.treeish = treeish
 
         # Check for "excludes", because they're not allowed in git
-        if ' !' in repository:
-            raise Exception("excludes are not allowed in git: %s" % repository)
+        if ' !' in repo:
+            raise Exception("excludes are not allowed in git: %s" % repo)
+
 
     def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
             , test_mode=False):

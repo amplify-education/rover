@@ -72,64 +72,52 @@ class GitRepo(RoverItem):
         """Rover checkout = git clone
 
         sh => a shell through which rover should make system calls"""
-        # passing in preserve_dirs will be much more in depth; for now, assume its
-        #   always true!
-        preserve_dirs = True
-        if preserve_dirs:
-            cwd = os.path.join(checkout_dir, self.repo_path)
-        else:
-            cwd = checkout_dir
+        # passing in preserve_dirs will be much more in depth;
+        # for now, assume its always true!
 
-        git_dir = os.path.join(cwd,self.repo_name)
+        # remove the .git extension from the checkout_dir
+        repo, dot_git = os.path.splitext(self.repository)
+        if dot_git.lower() != '.git':
+            # extension isn't .git, use the original repo
+            repo = self.repository
 
-        if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
-            cmd = ['git']
-            cmd.append('clone')
-            if not verbose:
-                cmd.append('-q')
-            cmd.append(self.repository)
+        # set checkout destination and git dir
+        dest = os.path.join(checkout_dir, repo)
+        git_dir = os.path.join(dest, '.git')
 
-            if not test_mode and not os.path.exists(cwd):
-                os.makedirs(cwd)
+        # join the repo
+        full_repo = os.path.join(self.uri, self.repository)
 
-            sh.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
-
-        else:
-            # under clean mode, reset local changes
-            if checkout_mode == 'clean':
-                # First, reset to revision
-                sh.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
-
-                # Then get rid of any lingering local changes that
-                #   will disrupt our pull
-                sh.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
-
+        if os.path.exists(git_dir):
             # Finally, do the pull!
             cmd = ['git pull']
             if not verbose:
                 cmd.append('-q')
 
             sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+        else:
+            self._clone(sh, full_repo, dest, verbose=verbose)
 
+    def _clone(self, sh, full_repo, dest, verbose=True, test_mode=False):
+        clone = ['git', 'clone']
+        if not verbose:
+            clone.append('-q')
+        clone.append(full_repo)
+        clone.append(dest)
+
+        # if not test_mode and not os.path.exists(cwd):
+        #    os.makedirs(cwd)
+        sh.execute(clone, verbose=verbose, test_mode=test_mode)
 
         # Check out the branch in question!
-        cmd = ['git checkout']
+        # os.chdir(dest) TODO: convert this to be done by sh
 
+        co = ['git', 'checkout']
         if not verbose:
-            cmd.append('-q')
+            co.append('-q')
+        co.append(self.treeish)
+        sh.execute(co, verbose=verbose, test_mode=test_mode)
 
-        # If checkout_mode is clean, throw away local changes
-        if checkout_mode == 'clean':
-            cmd.append('-f')
-
-        # Checkout the remote branch, always... we don't care about
-        #   local changes.  There should be NO local branches!
-        #
-        # FIXME: This will not work with tags!!!
-        #
-        cmd.append("origin/%s" % self.refspec)
-
-        sh.execute(cmd, cwd=cwd, verbose=verbose, test_mode=test_mode)
 
     def get_path(self):
         """

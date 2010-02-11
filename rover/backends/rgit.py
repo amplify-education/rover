@@ -61,7 +61,7 @@ class GITItem(RoverItem):
 
         # Detect the two forms as per git's documentation
         # TODO: Add support for local repos
-        result = re.match("^(rsync|ssh|git|http|https|file)://(?:.*?)/(.*)(?:\.git)?$", repository)
+        result = re.match("^(?:rsync|ssh|git|http|https|file)://(?:.*?)/(.*)(?:\.git)?$", repository)
 
         # If its not one of the above, it has to be SSH as follows
         if result is None:
@@ -73,6 +73,7 @@ class GITItem(RoverItem):
             raise Exception("malformed git connection string `%s'; please see `man git-clone' for supported connection strings." % repository)
 
         # Separate repo and path
+        print result.groups()
         self.repo_path, self.repo_name = os.path.split( result.groups()[0] )
 
         # Check for "excludes", because they're not allowed in git
@@ -129,12 +130,16 @@ class GITItem(RoverItem):
         #
         # Check to see if the local branch exists
         cmd = 'git branch -l --no-color'
-        ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode)
+        ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode, return_out=True)
 
         new_branch = False
         refspec = self.refspec
 
+        output = output[0]
+
         # Check to see if the local branch exists
+        print "\W+%s$" % self.refspec
+        print output
         if not re.match("\W+%s$" % self.refspec, output):
             cmd = 'git branch -r --no-color'
             ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode)

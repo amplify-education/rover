@@ -6,4 +6,5 @@
 # svn: <module> , <branch/tag> , svn , <repository>
 # git: <connection_string> , <branch/tag> , git
 
-file:///Users/amcfague/git/mclass/circle       , master , git
+git://github.com/projects/rover       , master , git
+git@github.com:projects/rover         , next   , git

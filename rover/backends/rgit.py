@@ -61,7 +61,7 @@ class GITItem(RoverItem):
 
         # Detect the two forms as per git's documentation
         # TODO: Add support for local repos
-        result = re.match("^(rsync|ssh|git|http|https)://(?:.*?)/(.*)(?:\.git)?$", repository)
+        result = re.match("^(rsync|ssh|git|http|https|file)://(?:.*?)/(.*)(?:\.git)?$", repository)
 
         # If its not one of the above, it has to be SSH as follows
         if result is None:
@@ -90,9 +90,12 @@ class GITItem(RoverItem):
 
         git_dir = os.path.join(cwd,self.repo_name)
 
+        # Path doesn't exist, so we need to clone the repo
         if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
-            cmd = ['git']
-            cmd.append('clone')
+            cmd = ['git clone']
+
+            # Don't do a checkout after the clone
+            cmd.append('-n')
             if not verbose:
                 cmd.append('-q')
             cmd.append(self.repository)
@@ -117,8 +120,32 @@ class GITItem(RoverItem):
             if not verbose:
                 cmd.append('-q')
 
+            cmd.append('%s:origin/%s' % (self.refspec, self.refspec))
+
             util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
+        # Make sure the branch exists; we'll need the actual
+        #   relative path to the branch; i.e., remotes/origin/a_branch
+        #
+        # Check to see if the local branch exists
+        cmd = 'git branch -l --no-color'
+        ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode)
+
+        new_branch = False
+        refspec = self.refspec
+
+        # Check to see if the local branch exists
+        if not re.match("\W+%s$" % self.refspec, output):
+            cmd = 'git branch -r --no-color'
+            ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode)
+
+            # Make sure the remote version exists, too!
+            # TODO: See if there's any git API functions to do this
+            if not re.match("\W+origin/%s$" % self.refspec, output):
+                raise Exception("branch '%s' could not be found in the repository" % self.refspec)
+
+            new_branch = True
+            refspec = "origin/%s" % refspec
 
         # Check out the branch in question!
         cmd = ['git checkout']
@@ -130,12 +157,11 @@ class GITItem(RoverItem):
         if checkout_mode == 'clean':
             cmd.append('-f')
 
-        # Checkout the remote branch, always... we don't care about
-        #   local changes.  There should be NO local branches!
-        #
-        # FIXME: This will not work with tags!!!
-        #
-        cmd.append("origin/%s" % self.refspec)
+        # Track this branch locally
+        if new_branch:
+            cmd.append('-t')
+
+        cmd.append(refspec)
 
         util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 

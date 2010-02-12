@@ -6,6 +6,5 @@
 # svn: <module> , <branch/tag> , svn , <repository>
 # git: <connection_string> , <branch/tag> , git
 
-acme/test/app                   , HEAD      , cvs
-project9                        , bar_b     , svn , http://acme.com/svn
-acme.com:acme/app/plan3.git     , master    , git
+git://github.com/projects/rover       , master , git
+git@github.com:projects/rover         , next   , git

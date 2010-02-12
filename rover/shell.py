@@ -29,6 +29,8 @@ import shutil
 
 class Shell(object):
     "Shell class for executing commands on the system"
+    def __init__(self):
+        self.dirstack = list()
 
     def tee(self, cmd, cwd=None):
         """
@@ -136,6 +138,17 @@ class Shell(object):
             return (0, [])
         else:
             return 0
+
+    def push_dir(self, new_dir):
+        """Push the current directory onto the stack and change to a new one
+        """
+        self.dirstack.append(os.path.abspath(os.getcwd()))
+        os.chdir(new_dir)
+
+    def pop_dir(self):
+        """Pop a directory off the stack and change to it."""
+        dir = self.dirstack.pop()
+        os.chdir(dir)
 
     def move(self, old_file, new_file):
         """Rename a file."""

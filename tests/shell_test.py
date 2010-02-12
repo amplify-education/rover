@@ -111,6 +111,19 @@ class ShellTestCase(unittest.TestCase):
         self.assertEquals(out, [])
         self.assertEquals(returncode, 0)
 
+    def test_push_pop_dir(self):
+        """Pushing and popping a directory works as expected
+
+        Depends on not being in the root directory"""
+        pwd = os.path.abspath(os.getcwd())
+        one_level_down, topdir = os.path.split(pwd)
+
+        self.shell.push_dir('..')
+        self.assertEqual(one_level_down, os.path.abspath(os.getcwd()))
+
+        self.shell.pop_dir()
+        self.assertEqual(pwd, os.path.abspath(os.getcwd()))
+
 
 
 if __name__ == '__main__':

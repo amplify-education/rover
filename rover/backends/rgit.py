@@ -23,19 +23,20 @@
 
 import os
 import re
-import shutil
+import rover.shell
+import subprocess
 import types
+from distutils import version
 
-from rover import util
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
-class GITFactory(RoverItemFactory):
+class GitFactory(RoverItemFactory):
     def __init__(self):
         pass
 
     def get_rover_items(self, config_line):
         module, revision = config_line[:2]
-        out = [GITItem(module, revision)]
+        out = [GitItem(module, revision)]
         return out
 
     def _is_alias(self, module):
@@ -54,33 +55,35 @@ class GITFactory(RoverItemFactory):
     def _get_aliases(self):
         pass
 
-class GITItem(RoverItem):
+class GitItem(RoverItem):
     def __init__(self, repository, refspec):
         self.repository = repository
         self.refspec = refspec
 
         # Detect the two forms as per git's documentation
         # TODO: Add support for local repos
-        result = re.match("^(?:rsync|ssh|git|http|https|file)://(?:.*?)/(.*)(?:\.git)?$", repository)
+        result = re.match("^(?:rsync|ssh|git|http|https)://(?:.*?)/(.*)(?:\.git)?$", repository)
 
         # If its not one of the above, it has to be SSH as follows
         if result is None:
             result = re.match("^(?:.*?@?).*:(.*?)(?:\.git)?$", repository)
 
-
         # If result is still none, we weren't able to match anything...
         if result is None:
-            raise Exception("malformed git connection string `%s'; please see `man git-clone' for supported connection strings." % repository)
+            raise Exception("malformed git connection string `%s'; please see `git clone --help' for supported connection strings." % repository)
 
         # Separate repo and path
-        print result.groups()
         self.repo_path, self.repo_name = os.path.split( result.groups()[0] )
 
         # Check for "excludes", because they're not allowed in git
         if ' !' in repository:
             raise Exception("excludes are not allowed in git: %s" % repository)
 
-    def checkout(self, checkout_dir, checkout_mode, verbose=True, test_mode=False):
+    def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
+            , test_mode=False):
+        """Rover checkout = git clone
+
+        sh => a shell through which rover should make system calls"""
         # passing in preserve_dirs will be much more in depth; for now, assume its
         #   always true!
         preserve_dirs = True
@@ -91,11 +94,8 @@ class GITItem(RoverItem):
 
         git_dir = os.path.join(cwd,self.repo_name)
 
-        # Path doesn't exist, so we need to clone the repo
         if not os.path.exists( os.path.join(cwd, self.repo_name, '.git') ):
             cmd = ['git clone']
-
-            # Don't do a checkout after the clone
             cmd.append('-n')
             if not verbose:
                 cmd.append('-q')
@@ -104,71 +104,58 @@ class GITItem(RoverItem):
             if not test_mode and not os.path.exists(cwd):
                 os.makedirs(cwd)
 
-            util.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
-
+            sh.execute(cmd, cwd=cwd, verbose=verbose,test_mode=test_mode)
         else:
             # under clean mode, reset local changes
             if checkout_mode == 'clean':
-                # First, reset to revision
-                util.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
+                # First, reset to our latest commit
+                sh.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
 
                 # Then get rid of any lingering local changes that
                 #   will disrupt our pull
-                util.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
+                sh.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
 
-            # Finally, do the pull!
-            cmd = ['git pull']
+            # Finally, fetch the changes... we'll do a checkout *later*
+            cmd = ['git fetch']
             if not verbose:
                 cmd.append('-q')
 
-            cmd.append('%s:origin/%s' % (self.refspec, self.refspec))
+            sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
-            util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+        stdoutput, stderror = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE).communicate()
+        match = re.match("^git version (\d+(?:\.\d+)+)$", stdoutput)
 
-        # Make sure the branch exists; we'll need the actual
-        #   relative path to the branch; i.e., remotes/origin/a_branch
-        #
-        # Check to see if the local branch exists
-        cmd = 'git branch -l --no-color'
-        ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode, return_out=True)
+        if not match:
+            print stderror
+            raise Exception("`git --version' ended with return code %d." % proc.returncode)
 
-        new_branch = False
-        refspec = self.refspec
-
-        output = output[0]
-
-        # Check to see if the local branch exists
-        print "\W+%s$" % self.refspec
-        print output
-        if not re.match("\W+%s$" % self.refspec, output):
-            cmd = 'git branch -r --no-color'
-            ret, output = util.execute(cmd, cwd=git_dir, test_mode=test_mode)
-
-            # Make sure the remote version exists, too!
-            # TODO: See if there's any git API functions to do this
-            if not re.match("\W+origin/%s$" % self.refspec, output):
-                raise Exception("branch '%s' could not be found in the repository" % self.refspec)
-
-            new_branch = True
-            refspec = "origin/%s" % refspec
-
-        # Check out the branch in question!
+        git_version = version.LooseVersion(match.group(1))
         cmd = ['git checkout']
-
         if not verbose:
             cmd.append('-q')
 
-        # If checkout_mode is clean, throw away local changes
-        if checkout_mode == 'clean':
-            cmd.append('-f')
+        # This can happen with certain untracked files; since we don't want to
+        #   fail, we'll force new files to be updated, even with local mods
+        cmd.append("-f")
 
-        # Track this branch locally
-        if new_branch:
-            cmd.append('-t')
+        # As of 1.6.6, we can now use a much easier method of checking out
+        #   branches AND tags! Basically, it treats it as if it were a local
+        #   branch, but will automatically fetch and track it if not
+        #
+        if git_version >= version.LooseVersion("1.8.6") or \
+           self.find_local_branch(self.refspec, git_dir, sh):
+            cmd.append(self.refspec)
+        # Is it remote?
+        elif self.find_remote_branch(self.refspec, git_dir, sh):
+            cmd.append("--track -b %s origin/%s" % (self.refspec,self.refspec))
+        # Is it a tag?
+        elif self.find_tag(self.refspec, git_dir, sh):
+            cmd.append("--track -b %s %s" % (self.refspec, self.refspec))
+        # Option D: None of the above
+        else:
+            raise Exception("branch '%s' does not exist for repository '%s'" % (self.refspec,self.repository))
 
-        cmd.append(refspec)
-
-        util.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+        sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
     def get_path(self):
         """
@@ -191,7 +178,28 @@ class GITItem(RoverItem):
         return [self]
 
     def narrow(self, path):
-        return GITItem(path, self.revision)
+        return GitItem(path, self.revision)
+
+    def find_tag(self, refspec, directory, sh):
+        return self.__ref_parse('refs/tags/%s' % refspec, directory, sh)
+
+    def find_local_branch(self, refspec, directory, sh):
+        return self.__ref_parse('refs/heads/%s' % refspec, directory, sh)
+
+    def find_remote_branch(self, refspec, directory, sh):
+        return self.__ref_parse('refs/remotes/origin/%s' % refspec, directory, sh)
+
+    def __ref_parse(self, refpath, directory, sh):
+        """
+        will parse through the git repository, checking for the selected refpath,
+        and then return True if it exists or False otherwise
+        """
+        cmd = "git for-each-ref '%s'" % refpath
+        ret, output = sh.tee_silent(cmd, cwd=directory)
+
+        if ret:
+            raise Exception("Error while executing '%s': %s" % (cmd, output))
+        return len(output) != 0
 
     def __repr__(self):
         return ''

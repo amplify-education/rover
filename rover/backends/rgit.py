@@ -142,7 +142,7 @@ class GitItem(RoverItem):
         #   branches AND tags! Basically, it treats it as if it were a local
         #   branch, but will automatically fetch and track it if not
         #
-        if git_version >= version.LooseVersion("1.8.6") or \
+        if git_version >= version.LooseVersion("1.6.6") or \
            self.find_local_branch(self.refspec, git_dir, sh):
             cmd.append(self.refspec)
         # Is it remote?

@@ -139,6 +139,11 @@ class Shell(object):
         else:
             return 0
 
+    def exists(self, path):
+        """Check if a file exists
+        """
+        os.path.exists(path)
+
     def push_dir(self, new_dir):
         """Push the current directory onto the stack and change to a new one
         """

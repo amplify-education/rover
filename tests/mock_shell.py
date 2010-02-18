@@ -70,6 +70,11 @@ class MockShell(object):
         """Mock version from rover.shell"""
         self.history.append(cmd)
 
+
+    def exists(self, path):
+        self.history.append('exists(%s)' % path)
+        return self._pop_result()
+
     def push_dir(self, dir):
         self.history.append("push_dir(%s)" % dir)
 

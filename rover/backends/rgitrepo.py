@@ -88,7 +88,7 @@ class GitRepo(RoverItem):
         # join the repo
         full_repo = os.path.join(self.uri, self.repository)
 
-        if os.path.exists(git_dir):
+        if sh.exists(git_dir):
             # Finally, do the pull!
             cmd = ['git pull']
             if not verbose:

@@ -39,15 +39,17 @@ class MockShell(object):
         """Test function to seed a result into the shell.
         
         Results are queued and returned in the order they are added."""
-        self.results.append((return_code, output))
+        r = (return_code, output)
+        self.mock_results.append(r)
 
     def _pop_result(self):
         """Pop and return a result from the queue."""
-        if len(self.mock_result) == 0:
+        if len(self.mock_results) == 0:
             if self.underflow_error:
                 raise Exception("Insufficient mock result data")
             return (0, '')
-        r = self.results[0]
+        r = self.mock_results[0]
+	return r
 
     def tee(self, cmd, cwd=None):
         """Mock version from rover.shell"""

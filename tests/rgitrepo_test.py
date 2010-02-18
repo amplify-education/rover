@@ -64,7 +64,7 @@ class GitItemCheckoutTest(unittest.TestCase):
         self.item = rgitrepo.GitRepo('wgen-github', 'git://github.com/wgen/'
                 , 'rover.git', 'master')
 
-    def test_git_checkout_verbose(self):
+    def test_git_checkout_new_repo(self):
         self.item.checkout(self.sh, 'dest', '')
 
         self.assertEquals(2, len(self.sh.history))

@@ -70,7 +70,7 @@ class MockShell(object):
         """Mock version from rover.shell"""
         self.history.append(cmd)
 
-    def push_dir(dir):
+    def push_dir(self, dir):
         self.history.append("push_dir(%s)" % dir)
 
     def pop_dir(self):

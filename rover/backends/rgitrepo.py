@@ -27,6 +27,7 @@ import types
 
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
+
 class GitConnection(RoverItemFactory):
     def __init__(self, name, uri):
         self.name = name
@@ -54,6 +55,7 @@ class GitConnection(RoverItemFactory):
 
     def _get_aliases(self):
         pass
+
 
 class GitRepo(RoverItem):
     def __init__(self, conn, uri, repo, treeish):
@@ -89,12 +91,7 @@ class GitRepo(RoverItem):
         full_repo = os.path.join(self.uri, self.repository)
 
         if sh.exists(git_dir):
-            # Finally, do the pull!
-            cmd = ['git pull']
-            if not verbose:
-                cmd.append('-q')
-
-            sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
+            self._pull(sh, full_repo, dest)
         else:
             self._clone(sh, full_repo, dest, verbose=verbose)
 
@@ -117,6 +114,22 @@ class GitRepo(RoverItem):
             co.append('-q')
         co.append(self.treeish)
         sh.execute(co, verbose=verbose, test_mode=test_mode)
+
+    def _pull(self, sh, full_repo, dest):
+        """For an existing repo, do a git pull
+        """
+        # get into the right directory first
+        sh.push_dir(dest)
+
+        # checkout the right branch
+        co = ['git', 'checkout', self.treeish]
+        sh.execute(co)
+
+        # finally, do the pull
+        pull = ['git', 'pull']
+        sh.execute(pull)
+
+        sh.pop_dir()
 
 
     def get_path(self):

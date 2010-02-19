@@ -80,3 +80,17 @@ class GitItemCheckoutTest(unittest.TestCase):
         history2 = self.sh.history[2]
         self.assertEquals(output2, history2)
 
+    def test_git_checkout_pull(self):
+        self.sh.undeflow_error = True
+        self.sh.seed_result(1)
+        self.item.checkout(self.sh, 'dest', '')
+
+        print "history = %s" % str(self.sh.history)
+
+        expectedChdir = 'push_dir(dest/rover)'
+        expectedCheckout = ['git', 'checkout', 'master']
+        expectedPull = ['git', 'pull']
+        self.assertEquals(expectedChdir, self.sh.history[1])
+        self.assertEquals(expectedCheckout, self.sh.history[2])
+        self.assertEquals(expectedPull, self.sh.history[3])
+

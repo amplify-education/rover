@@ -30,13 +30,13 @@ from distutils import version
 
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
-class GitFactory(RoverItemFactory):
+class GITFactory(RoverItemFactory):
     def __init__(self):
         pass
 
     def get_rover_items(self, config_line):
         module, revision = config_line[:2]
-        out = [GitItem(module, revision)]
+        out = [GITItem(module, revision)]
         return out
 
     def _is_alias(self, module):
@@ -55,7 +55,7 @@ class GitFactory(RoverItemFactory):
     def _get_aliases(self):
         pass
 
-class GitItem(RoverItem):
+class GITItem(RoverItem):
     def __init__(self, repository, refspec):
         self.repository = repository
         self.refspec = refspec
@@ -178,7 +178,7 @@ class GitItem(RoverItem):
         return [self]
 
     def narrow(self, path):
-        return GitItem(path, self.revision)
+        return GITItem(path, self.revision)
 
     def find_tag(self, refspec, directory):
         return self.__ref_parse('refs/tags/%s' % refspec, directory)

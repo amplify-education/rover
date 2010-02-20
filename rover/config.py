@@ -27,3 +27,39 @@
 import os
 
 config_dir = os.path.abspath('.rover')
+
+REPO_FILE_NAME = "REPOS"
+
+class RepoInfo(object):
+    """Structured data for a configured repo."""
+    def __init__(self, repoline):
+        print "repoline = '%s'" % repoline
+        repoline = repoline.strip()
+        if len(repoline) == 0:
+            # blank line, fail
+            raise Exception("Cannot initialize RepoInfo for blank line")
+        elif repoline[0] == '#':
+            # commented line, fail
+            raise Exception("Cannot initialize RepoInfo for commented line")
+        parts = repoline.split(',')
+
+        self.name = parts[0].strip()
+        self.vcs = parts[1].strip()
+        self.uri = parts[2].strip()
+
+
+def open_repofile(path):
+    filename = os.path.join(path, REPO_FILE_NAME)
+    return open(filename)
+
+def parse_repos(repofile):
+    """Get repos from an open file."""
+    repos = []
+    for line in repofile:
+        line = line.strip()
+        if len(line) == 0 or line[0] == '#':
+            # blank or commented line, skip it
+            continue
+        repos.append(RepoInfo(line))
+    return repos
+

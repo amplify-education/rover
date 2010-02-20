@@ -23,7 +23,7 @@
 
 import os
 import re
-import rover.shell
+import rover.util as sh
 import subprocess
 import types
 from distutils import version
@@ -79,7 +79,7 @@ class GitItem(RoverItem):
         if ' !' in repository:
             raise Exception("excludes are not allowed in git: %s" % repository)
 
-    def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
+    def checkout(self, checkout_dir, checkout_mode, verbose=True
             , test_mode=False):
         """Rover checkout = git clone
 
@@ -143,13 +143,13 @@ class GitItem(RoverItem):
         #   branch, but will automatically fetch and track it if not
         #
         if git_version >= version.LooseVersion("1.6.6") or \
-           self.find_local_branch(self.refspec, git_dir, sh):
+           self.find_local_branch(self.refspec, git_dir):
             cmd.append(self.refspec)
         # Is it remote?
-        elif self.find_remote_branch(self.refspec, git_dir, sh):
+        elif self.find_remote_branch(self.refspec, git_dir):
             cmd.append("--track -b %s origin/%s" % (self.refspec,self.refspec))
         # Is it a tag?
-        elif self.find_tag(self.refspec, git_dir, sh):
+        elif self.find_tag(self.refspec, git_dir):
             cmd.append("--track -b %s %s" % (self.refspec, self.refspec))
         # Option D: None of the above
         else:
@@ -180,16 +180,16 @@ class GitItem(RoverItem):
     def narrow(self, path):
         return GitItem(path, self.revision)
 
-    def find_tag(self, refspec, directory, sh):
-        return self.__ref_parse('refs/tags/%s' % refspec, directory, sh)
+    def find_tag(self, refspec, directory):
+        return self.__ref_parse('refs/tags/%s' % refspec, directory)
 
-    def find_local_branch(self, refspec, directory, sh):
-        return self.__ref_parse('refs/heads/%s' % refspec, directory, sh)
+    def find_local_branch(self, refspec, directory):
+        return self.__ref_parse('refs/heads/%s' % refspec, directory)
 
-    def find_remote_branch(self, refspec, directory, sh):
-        return self.__ref_parse('refs/remotes/origin/%s' % refspec, directory, sh)
+    def find_remote_branch(self, refspec, directory):
+        return self.__ref_parse('refs/remotes/origin/%s' % refspec, directory)
 
-    def __ref_parse(self, refpath, directory, sh):
+    def __ref_parse(self, refpath, directory):
         """
         will parse through the git repository, checking for the selected refpath,
         and then return True if it exists or False otherwise

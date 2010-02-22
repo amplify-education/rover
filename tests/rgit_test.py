@@ -65,7 +65,13 @@ class GitItemCheckoutTest(unittest.TestCase):
         self.sh = MockShell()
         self.item = rgit.GitItem('git://github.com/wgen/rover.git', 'master')
 
+    # FIXME: This ONLY checks branch checkouts! Currently, no way of checking
+    #   for tag or checkouts, although this is hard to test offline
     def test_git_checkout(self):
+        # Check the number of commands run
+        #   git clone ...
+        #   git checkout ...
+        #
         self.item.checkout(self.sh, 'dest', '', verbose=True, test_mode=True)
         self.assertEquals(2, len(self.sh.history))
 

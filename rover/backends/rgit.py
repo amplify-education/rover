@@ -81,11 +81,20 @@ class GitItem(RoverItem):
 
     def checkout(self, sh, checkout_dir, checkout_mode, verbose=True
             , test_mode=False):
-        """Rover checkout = git clone
+        """Rover checkout = git clone; git checkout
 
         sh => a shell through which rover should make system calls"""
-        # passing in preserve_dirs will be much more in depth; for now, assume its
-        #   always true!
+
+        # When checking out in git, it will take the last name in the connection
+        #   string, and then extra it to $CWD/<name>.  Because we might want this
+        #   to behave otherwise, i.e.:
+        #
+        #       git://github.com/WgenAdmin/rover => WgenAdmin/rover
+        #
+        #   ...we'll implement a "preserve directory structure" option.  For now,
+        #   we always assume its true.  However, in the future, we'll have this
+        #   as either a config or command line option.
+        #
         preserve_dirs = True
         if preserve_dirs:
             cwd = os.path.join(checkout_dir, self.repo_path)
@@ -108,20 +117,26 @@ class GitItem(RoverItem):
         else:
             # under clean mode, reset local changes
             if checkout_mode == 'clean':
-                # First, reset to our latest commit
+                # First, reset to our latest commit; this can be VERY dangerous
+                #   if you have uncommitted changes in your tree!
                 sh.execute("git reset --hard", verbose=verbose, test_mode=test_mode)
 
-                # Then get rid of any lingering local changes that
-                #   will disrupt our pull
+                # Then get rid of any lingering local changes (i.e., untracked)
+                #   This is incredibly dangerous if you're using rover in a
+                #   development environment; make sure you've committed changes!
                 sh.execute("git clean -fd", verbose=verbose, test_mode=test_mode)
 
-            # Finally, fetch the changes... we'll do a checkout *later*
+            # Finally, fetch the changes... we'll do a checkout later, because
+            #   we have to treat remote branches, local branches, and tags, in
+            #   special ways.
             cmd = ['git fetch']
             if not verbose:
                 cmd.append('-q')
 
             sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
+        # We need to get git version information because of several changes in
+        #   the CLI that began in in 1.6.6.
         stdoutput, stderror = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE).communicate()
         match = re.match("^git version (\d+(?:\.\d+)+)$", stdoutput)
 
@@ -168,7 +183,7 @@ class GitItem(RoverItem):
 
     def exclude(self, path):
         # git does not support excludes
-        raise Exception("excludes are not allowed in git: %s" % repository)
+        raise Exception("excludes are not allowed in git: %s" % self.repository)
         pass
 
     def expand(self):

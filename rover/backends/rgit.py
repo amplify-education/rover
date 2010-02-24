@@ -124,7 +124,7 @@ class GITItem(RoverItem):
 
         proc = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE)
         stdoutput, stderror = proc.communicate()
-        match = re.match("^git version (\d+(?:\.\d+)+)$", stdoutput)
+        match = re.match("^git version (\d+\.\d+\.\d+).*$", stdoutput)
 
         if not match:
             print stderror

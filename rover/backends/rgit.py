@@ -122,7 +122,8 @@ class GITItem(RoverItem):
 
             sh.execute(cmd, cwd=git_dir, verbose=verbose, test_mode=test_mode)
 
-        stdoutput, stderror = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE).communicate()
+        proc = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE)
+        stdoutput, stderror = proc.communicate()
         match = re.match("^git version (\d+(?:\.\d+)+)$", stdoutput)
 
         if not match:

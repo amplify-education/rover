@@ -180,7 +180,8 @@ class SVNItem(RoverItem):
         items = self.expand()
         out = []
         for item in items:
-            out.append("%s, %s, svn, %s" % (item.module, item.revision, item.url))
+            out.append("SVNItem<%s, %s, svn, %s>"
+                    % (item.module, item.revision, item.url))
         return '\n'.join(out)
 
     def __eq__(self, other):

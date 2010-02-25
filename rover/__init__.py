@@ -184,8 +184,11 @@ class Rover:
             if line:
                 item = [x.strip() for x in line.split(',')]
                 # TODO: better validation here; how?
-                if len(item) < 3 or item[2] not in self.factory_map:
-                    self.config_errors.append('invalid config line: "%s"' % line)
+                if len(item) < 3:
+                    self.config_errors.append('invalid config line: "%s"'
+                            % line)
+                elif item[2] not in self.factory_map:
+                    self.config_errors.append('unknown repository: "%s"' % line)
                 else:
                     config_lines.append(tuple(item))
 

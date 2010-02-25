@@ -80,7 +80,17 @@ def mock_os_walk_factory(dir):
 
 
 class RoverParserTestCase(unittest.TestCase):
-    
+
+    def test_rover_load_repos(self):
+        """Test that load repos correctly loads into factory_map"""
+
+        r = Rover('')
+        self.assertTrue('github' not in r.factory_map)
+
+        repofile = StringIO("github, git, git://github.com/wgen/")
+        r.load_repos(repofile)
+        self.assertTrue('github' in r.factory_map)
+
     def test_fails_on_unsupported_vcs(self):
         """
         tests that the parser fails if an unsupported vcs is specified

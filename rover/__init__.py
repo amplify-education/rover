@@ -36,6 +36,7 @@ import rover.shell
 from backends.rcvs import CVSFactory
 from backends.rsvn import SVNFactory
 from backends.rgit import GitFactory
+from backends.rgitrepo import GitConnection
 
 class Rover:
 
@@ -45,7 +46,8 @@ class Rover:
         'svn': SVNFactory(),
         'git': GitFactory()
     }
-    
+
+
     def __init__(self, config_names, checkout_mode='preserve', checkout_dir=os.getcwd()):
         self.config_names = config_names
         if type(self.config_names) in types.StringTypes:
@@ -98,7 +100,20 @@ class Rover:
         """
         if self.checkout_mode not in ['paranoid', 'clean', 'preserve']:
             raise Exception("mode must be one of {'paranoid', 'clean', 'preserve'}")
-        
+
+    def load_repos(self, repofile):
+        """Load factories for each repo defined in the REPOS file
+        """
+        repos = config.parse_repos(repofile)
+        for rinfo in repos:
+            conn = None
+            if rinfo.vcs.lower() == 'git':
+                conn = GitConnection(rinfo.name, rinfo.uri)
+            else:
+                raise Exception("%s is an unsupported vcs" % rinfo.vcs)
+            self.factory_map[conn.name] = conn
+        print "self.factory_map = %s" % str(self.factory_map)
+
     def process_config(self, config_name):
         revision = None
         if '@' in config_name:
@@ -393,6 +408,8 @@ class Rover:
     def run(self):
         """
         """
+        self.load_repos(config.open_repofile('.rover/'))
+
         # open and parse each config file into a list of tuples
         for config_name in self.config_names:
             self.process_config(config_name)

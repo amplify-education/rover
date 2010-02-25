@@ -271,7 +271,7 @@ class CVSItem(RoverItem):
         out = []
         for item in items:
             module = [item.module] + item.excludes
-            out.append("CVSItem: %s, %s, cvs" % (' !'.join(module), item.revision))
+            out.append("CVSItem<%s, %s, cvs>" % (' !'.join(module), item.revision))
         return '\n'.join(out)
 
     def __eq__(self, other):

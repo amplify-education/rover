@@ -112,6 +112,9 @@ class RoverParserTestCase(unittest.TestCase):
     def test_config_parser_basics(self):
         """
         tests that the config parser does basic parsing correctly
+
+        This test depends on a live connection to check CVSFactory.is_alias()
+        and will fail without a good network connection.
         """
         
         s = StringIO("""acme/project9/foo, HEAD, cvs

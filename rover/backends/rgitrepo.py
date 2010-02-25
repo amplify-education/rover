@@ -139,7 +139,7 @@ class GitRepo(RoverItem):
         the working directory, until we can add a config option to specify
         otherwise.
         """
-        return self.repo_name
+        return self.repository
 
     def exclude(self, path):
         # git does not support excludes

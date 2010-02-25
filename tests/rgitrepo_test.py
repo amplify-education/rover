@@ -56,6 +56,7 @@ class GitRepoTest(unittest.TestCase):
         self.assertEquals('git://github.com/wgen/', item.uri)
         self.assertEquals('rover.git', item.repository)
         self.assertEquals('master', item.treeish)
+        self.assertEquals('rover.git', item.get_path())
 
 
 class GitItemCheckoutTest(unittest.TestCase):

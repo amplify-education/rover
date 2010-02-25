@@ -137,8 +137,9 @@ class GitItem(RoverItem):
 
         # We need to get git version information because of several changes in
         #   the CLI that began in in 1.6.6.
-        stdoutput, stderror = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE).communicate()
-        match = re.match("^git version (\d+(?:\.\d+)+)$", stdoutput)
+        proc = subprocess.Popen("git --version", shell=True, stdout=subprocess.PIPE)
+        stdoutput, stderror = proc.communicate()
+        match = re.match("^git version (\d+\.\d+\.\d+).*$", stdoutput)
 
         if not match:
             print stderror

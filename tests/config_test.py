@@ -63,6 +63,10 @@ sourceforge, cvs, :pserver:cvs.sourceforge.net:2401/cvsroot/
 """
 
 class ParseRepoTest(unittest.TestCase):
+    def test_empty_repofile(self):
+        repos = rover.config.parse_repos(StringIO(''))
+        self.assertEqual([], repos)
+
     def test_basic_parse_repos(self):
         repos = rover.config.parse_repos(StringIO(BASIC_REPOS_TEST_CASE))
 

@@ -50,7 +50,9 @@ class RepoInfo(object):
 
 def open_repofile(path):
     filename = os.path.join(path, REPO_FILE_NAME)
-    return open(filename)
+    if os.path.exists(filename):
+        return open(filename)
+    return StringIO('')
 
 def parse_repos(repofile):
     """Get repos from an open file."""

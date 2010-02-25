@@ -38,35 +38,53 @@ class GitFactoryTest(unittest.TestCase):
 
 
 class GitItemInitTest(unittest.TestCase):
-    def test_git_syntax_init(self):
-        """Not sure what the GitItem init test does
+    def test_git_syntax_init_url(self):
+        """
+        Check to make sure data using a URL encoded string works
+        """
+        item = rgit.GitItem('git://github.com/wgen/foss/rover.git', 'master')
 
-        I'm assuming that current
-        behavior is correct and writing the tests to match that."""
-        item = rgit.GitItem('git://github.com/wgen/rover.git', 'master')
+        self.assertEquals(item.repository, 'git://github.com/wgen/foss/rover.git')
+        self.assertEquals(item.refspec, 'master')
+        self.assertEquals(item.repo_path, 'wgen/foss')
+        self.assertEquals(item.repo_name, 'rover.git')
 
-        self.assertEquals('git://github.com/wgen/rover.git', item.repository)
-        self.assertEquals('master', item.refspec)
-        # not sure what the repo path and repo name values are supposed to be
-        self.assertEquals('wgen', item.repo_path)
-        self.assertEquals('rover.git', item.repo_name)
+    def test_git_syntax_init_ssh(self):
+        """
+        Check to make sure dating using an SSH encoded string works
+        """
+        item = rgit.GitItem('git@github.com:wgen/foss/rover.git', 'master')
+
+        self.assertEquals(item.repository, 'git@github.com:wgen/foss/rover.git')
+        self.assertEquals(item.refspec, 'master')
+        self.assertEquals(item.repo_path, 'wgen/foss')
+        self.assertEquals(item.repo_name, 'rover')
 
 class GitItemCheckoutTest(unittest.TestCase):
     def setUp(self):
         self.sh = MockShell()
         self.item = rgit.GitItem('git://github.com/wgen/rover.git', 'master')
 
+    # FIXME: This ONLY checks branch checkouts! Currently, no way of checking
+    #   for tag or checkouts, although this is hard to test offline
     def test_git_checkout(self):
-        self.item.checkout(self.sh, 'dest', '')
-
+        # Check the number of commands run
+        #   git clone ...
+        #   git checkout ...
+        #
+        self.item.checkout(self.sh, 'dest', '', verbose=True, test_mode=True)
         self.assertEquals(2, len(self.sh.history))
 
-        output0 = ['git', 'clone'
-                , 'git://github.com/wgen/rover.git']
+        # Clone command, just parsing cmdline runs
+        output0 = ['git clone', '-n', 'git://github.com/wgen/rover.git']
         history0 = self.sh.history[0]
         self.assertEquals(output0, history0)
 
-        output1 = ['git checkout', 'master']
+        # Checkout the branch from the previous clone
+        output1 = ['git checkout', '-f',  'master']
         history1 = self.sh.history[1]
         self.assertEquals(output1, history1)
+
+    def test_git_exclude(self):
+        self.assertRaises(Exception, self.item.exclude, "rover/backends")
 

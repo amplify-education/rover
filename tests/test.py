@@ -88,7 +88,9 @@ class RoverParserTestCase(unittest.TestCase):
 
         r = Rover('')
         r.parse_config(StringIO('acme/project9, HEAD, blah'))
-        self.assert_(len(r.config_errors) > 0)
+        self.assertEqual('unknown repository: "acme/project9, HEAD, blah"'
+                , r.config_errors[0])
+        self.assertTrue(len(r.config_errors) <= 1)
     
     def test_fails_on_formatting_error(self):
         """
@@ -98,7 +100,9 @@ class RoverParserTestCase(unittest.TestCase):
         
         r = Rover('')
         r.parse_config(StringIO('acme/project9, HEAD'))
-        self.assert_(len(r.config_errors) > 0)
+        self.assertEqual('invalid config line: "acme/project9, HEAD"'
+                , r.config_errors[0])
+        self.assertTrue(len(r.config_errors) <= 1)
 
     def test_fails_on_include(self):
         """

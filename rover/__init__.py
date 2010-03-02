@@ -42,7 +42,7 @@ class Rover:
     factory_map = {
         'cvs': CVSFactory(),
         'svn': SVNFactory(),
-        'git': GitFactory()
+        'git': GITFactory()
     }
     
     def __init__(self, config_names, checkout_mode='preserve', checkout_dir=os.getcwd()):

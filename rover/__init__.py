@@ -34,7 +34,7 @@ import config
 
 from backends.rcvs import CVSFactory
 from backends.rsvn import SVNFactory
-from backends.rgit import GitFactory
+from backends.rgit import GITFactory
 
 class Rover:
 

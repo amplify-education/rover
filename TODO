@@ -17,10 +17,6 @@
     identified at a later time.  Storing passwords in the config is not a great
     idea.
 
-- Instead of having to edit __init__.py whenever a new backend is added, it
-    would be much more convenient to have it simply parse the backends dir
-    and grab naming information from either the file or the class.
-
 - Give examples of checking out from multiple branches within the same module.
 
 - Documentation.  For everything.  Especially the core rover scripts.

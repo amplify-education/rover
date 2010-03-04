@@ -8,14 +8,6 @@
 
   Configuration Changes/Improvements
 ================================================================================
-- It makes more sense to have the VCS method be the first entry in the config
-    file, a la
-
-    cvs, acme/test/app, HEAD
-
-    This reads better, is more logical, and allows for additional fields to be
-    added without making the entry look awkward (such as the SVN backend!).
-
 - The CVS backend does not allow projects to checkout from more than one CVS
     repository, which stands at odds with the general idea of rover.  Similarly
     to SVN, it seems like it would be possible to add a CVSROOT field to the

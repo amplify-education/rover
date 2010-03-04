@@ -3,7 +3,6 @@
  1) Configuration
  2) Running Rover
  3) Stability Issues
- 4) Web Rover
 
 
   Configuration Changes/Improvements
@@ -40,9 +39,3 @@
     if attempting to checkout from git, display an appropriate error and a link
     to where it can be downloaded.
 
-
-  Web Rover
-================================================================================
-- Add CherryPy as a requirement
-
-- Create configuration file to set port number.

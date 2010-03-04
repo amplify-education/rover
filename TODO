@@ -36,9 +36,6 @@
 - Wrap errors with nicer messages, perhaps using one of the dozens of error
     modules currently available for Python.
 
-- Test rover with varying forms of Python; currently, Python 2.5 and 2.6 are the
-    only major versions known to work, and tested accordingly.
-
 - Add checks to see if the version control systems are even on the system; i.e.,
     if attempting to checkout from git, display an appropriate error and a link
     to where it can be downloaded.

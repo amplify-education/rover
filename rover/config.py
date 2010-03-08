@@ -25,6 +25,7 @@
 # information for rover (eg the config directory)
 
 import os
+from StringIO import StringIO
 
 config_dir = os.path.abspath('.rover')
 

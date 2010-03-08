@@ -23,6 +23,9 @@
 
   Version Control Systems
 ================================================================================
+- Support HTTP backend
+	HTTP[S] repos may be useful for downloading prebuilt dependencies
+
 - The more the merrier.
     * Bazaar
     * Mercurial

@@ -7,6 +7,8 @@
 
   Configuration Changes/Improvements
 ================================================================================
+- Load the REPOS file from the same directory as the config file
+
 - The CVS backend does not allow projects to checkout from more than one CVS
     repository, which stands at odds with the general idea of rover.  Similarly
     to SVN, it seems like it would be possible to add a CVSROOT field to the

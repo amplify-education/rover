@@ -29,7 +29,7 @@ from textwrap import dedent
 
 setup(
         name = "Rover",
-        version = "0.1",
+        version = "0.2",
         description="Automatically retrieves projects from various VCS",
         long_description = dedent("""\
                 Rover simplifies the task of creating a project that draws
@@ -42,7 +42,7 @@ setup(
         author_email = "github@wgen.net",
         url = "http://github.com/wgen/rover",
         license = "MIT",
-        keywords = "cvs svn rover checkout vcs",
+        keywords = "cvs svn git rover checkout vcs",
 
 
 

@@ -16,6 +16,8 @@
     identified at a later time.  Storing passwords in the config is not a great
     idea.
 
+- Feature to write a file that will recreate a given checkout state
+
 - Give examples of checking out from multiple branches within the same module.
 
 - Documentation.  For everything.  Especially the core rover scripts.

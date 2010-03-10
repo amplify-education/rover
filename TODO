@@ -18,6 +18,8 @@
 
 - Feature to write a file that will recreate a given checkout state
 
+- Feature to track if changes have been made since the previous checkout
+
 - Give examples of checking out from multiple branches within the same module.
 
 - Documentation.  For everything.  Especially the core rover scripts.

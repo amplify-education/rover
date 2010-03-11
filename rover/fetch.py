@@ -31,11 +31,10 @@ from optparse import OptionParser
 from rover import Rover
 
 def main():
-    parser = OptionParser("""usage: %prog [options] config[@revision] [config[@revision]] ...
+    parser = OptionParser("""usage: %prog [options] config[@revision]
 
-        Rover accepts one or more 'config' arguments, which are file names 
-        or paths to specific config files. The files will be concatenated in
-        the order they are specified and treated as a single file. A revison
+        Rover accepts one 'config' argument, which is a file name
+        or path to a given rover configuration file. A revison
         can be added optionally after the '@', and that revision will be
         forced for all modules in that config file.""")
     parser.add_option('-p', '--preserve-dirs',
@@ -84,6 +83,10 @@ def main():
     opts, args = parser.parse_args()
 
     if len(args) < 1:
+        parser.print_help()
+        sys.exit(-1)
+    elif len(args) > 1:
+        print "Multiple config names no longer supported as of version 0.3"
         parser.print_help()
         sys.exit(-1)
 

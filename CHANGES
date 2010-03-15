@@ -1,2 +1,9 @@
+0.3
+  - Improved git support with REPOS file
+  - Removed support for multiple configs in the command line
+
+0.2
+  - Git support
+
 0.1 (August 28, 2009)
   - Initial release

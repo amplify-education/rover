@@ -73,7 +73,6 @@ def find_repos(config_filepath):
 class RepoInfo(object):
     """Structured data for a configured repo."""
     def __init__(self, repoline):
-        print "repoline = '%s'" % repoline
         repoline = repoline.strip()
         if len(repoline) == 0:
             # blank line, fail

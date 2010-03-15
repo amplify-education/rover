@@ -48,7 +48,8 @@ class Rover:
     }
 
 
-    def __init__(self, config_names, checkout_mode='preserve', checkout_dir=os.getcwd()):
+    def __init__(self, config_names, checkout_mode='preserve'
+                , checkout_dir=os.getcwd()):
         self.config_names = config_names
         if type(self.config_names) in types.StringTypes:
             self.config_names = [self.config_names]
@@ -114,7 +115,6 @@ class Rover:
             else:
                 raise Exception("%s is an unsupported vcs" % rinfo.vcs)
             self.factory_map[conn.name] = conn
-        print "self.factory_map = %s" % str(self.factory_map)
 
     def process_config(self, config_name):
         revision = None

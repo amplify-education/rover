@@ -1,3 +1,6 @@
+0.3.1
+  - Fixed a bug with pulling existing repos
+
 0.3
   - Improved git support with REPOS file
   - Removed support for multiple configs in the command line

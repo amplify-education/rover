@@ -30,7 +30,10 @@ import shutil
 class Shell(object):
     "Shell class for executing commands on the system"
     def __init__(self):
+        """Initialize the shell object"""
         self.dirstack = list()
+        self.quiet = False
+        self.verbose = False
 
     def tee(self, cmd, cwd=None):
         """

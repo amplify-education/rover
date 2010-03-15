@@ -31,6 +31,8 @@ class MockShell(object):
                            in the mock_results list. Default is false
                            and 0 is returned in this case.
         """
+        self.quiet = False
+        self.verbose = False
         self.mock_results = list()
         self.history = list()
         self.underflow_error = underflow_error

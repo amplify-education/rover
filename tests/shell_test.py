@@ -34,6 +34,10 @@ class ShellTestCase(unittest.TestCase):
     def setUp(self):
         self.shell = rover.shell.Shell()
 
+    def test_constructor(self):
+        self.assertFalse(self.shell.verbose)
+        self.assertFalse(self.shell.quiet)
+
     def test_return_codes(self):
         """
         test that return codes are returned and work correctly

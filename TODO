@@ -7,6 +7,7 @@
 
   Configuration Changes/Improvements
 ================================================================================
+- Feature to write a file that will recreate a given checkout state
 
 - The CVS backend does not allow projects to checkout from more than one CVS
     repository, which stands at odds with the general idea of rover.  Similarly
@@ -16,8 +17,6 @@
     How we prompt the user for passwords (as needed) is something that can be
     identified at a later time.  Storing passwords in the config is not a great
     idea.
-
-- Feature to write a file that will recreate a given checkout state
 
 - Feature to track if changes have been made since the previous checkout
 
@@ -31,9 +30,10 @@
 - Support HTTP backend
 	HTTP[S] repos may be useful for downloading prebuilt dependencies
 
+- Hg backend
+
 - The more the merrier.
     * Bazaar
-    * Mercurial
     * SVK
     etc.
 

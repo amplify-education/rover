@@ -31,6 +31,45 @@ config_dir = os.path.abspath('.rover')
 
 REPO_FILE_NAME = "REPOS"
 
+
+def find_config(config_name):
+    """Given a config name, turn that into an existing config file
+
+    return an absolute path to the existing config file
+    raise an exception if the file is not found
+    """
+    # First check for a direct reference to actual filename
+    path = os.path.abspath(config_name)
+    if os.path.exists(path):
+        return path
+    # Check for a direct reference to filename w/o '.csv'
+    path = '%s.csv' % path
+    if os.path.exists(path):
+        return path
+
+    # Check for the file in the default config dir w/ '.csv' ext
+    path = os.path.abspath(os.path.join(config_dir, config_name))
+    if os.path.exists(path):
+        return path
+    # Check for the full in the default dir after appending .csv
+    path = '%s.csv' % path
+    if os.path.exists(path):
+        return path
+    return None
+
+
+def find_repos(config_filepath):
+    """If given a path to a config file, finds a corresponding repofile
+    """
+    if not os.path.exists(config_filepath):
+        return None
+    dir, file = os.path.split(config_filepath)
+    repo_filename = os.path.join(dir, REPO_FILE_NAME)
+    if not os.path.exists(repo_filename):
+        return None
+    return repo_filename
+
+
 class RepoInfo(object):
     """Structured data for a configured repo."""
     def __init__(self, repoline):
@@ -49,11 +88,13 @@ class RepoInfo(object):
         self.uri = parts[2].strip()
 
 
-def open_repofile(path):
-    filename = os.path.join(path, REPO_FILE_NAME)
-    if os.path.exists(filename):
-        return open(filename)
-    return StringIO('')
+def open_repofile(repo_filename):
+    """Open the repofile, return an empty StringIO if it doesn't exist
+    """
+    if not (repo_filename and os.path.exists(repo_filename)):
+        return StringIO('')
+    return open(repo_filename)
+
 
 def parse_repos(repofile):
     """Get repos from an open file."""

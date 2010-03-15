@@ -52,6 +52,8 @@ class Rover:
         self.config_names = config_names
         if type(self.config_names) in types.StringTypes:
             self.config_names = [self.config_names]
+        self.config_filename = rover.config.find_config(self.config_names[0])
+        self.repo_filename = rover.config.find_repos(self.config_filename)
         self.checkout_mode = checkout_mode
         self.checkout_dir = os.path.abspath(os.path.expanduser(checkout_dir))
 
@@ -408,7 +410,7 @@ class Rover:
     def run(self):
         """
         """
-        self.load_repos(config.open_repofile('.rover/'))
+        self.load_repos(config.open_repofile(self.repo_filename))
 
         # open and parse each config file into a list of tuples
         for config_name in self.config_names:

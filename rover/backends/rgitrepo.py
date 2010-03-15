@@ -96,24 +96,11 @@ class GitRepo(RoverItem):
             self._clone(sh, full_repo, dest, verbose=verbose)
 
     def _clone(self, sh, full_repo, dest, verbose=True, test_mode=False):
-        clone = ['git', 'clone']
-        if not verbose:
-            clone.append('-q')
-        clone.append(full_repo)
-        clone.append(dest)
+        clone = ['git', 'clone', '--branch', self.treeish, full_repo, dest]
+        if sh.quiet:
+            clone.insert(1, '-q')
 
-        # if not test_mode and not os.path.exists(cwd):
-        #    os.makedirs(cwd)
-        sh.execute(clone, verbose=verbose, test_mode=test_mode)
-
-        # Check out the branch in question!
-        # os.chdir(dest) TODO: convert this to be done by sh
-
-        co = ['git', 'checkout']
-        if not verbose:
-            co.append('-q')
-        co.append(self.treeish)
-        sh.execute(co, verbose=verbose, test_mode=test_mode)
+        result = sh.execute(clone, verbose=verbose, test_mode=test_mode)
 
     def _pull(self, sh, full_repo, dest):
         """For an existing repo, do a git pull

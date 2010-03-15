@@ -72,14 +72,11 @@ class GitItemCheckoutTest(unittest.TestCase):
         print "history = <%s>" % str(self.sh.history)
 
         output1 = ['git', 'clone'
+                , '--branch', 'master'
                 , 'git://github.com/wgen/rover.git'
                 , 'dest/rover']
         history1 = self.sh.history[1]
         self.assertEquals(output1, history1)
-
-        output2 = ['git', 'checkout', 'master']
-        history2 = self.sh.history[2]
-        self.assertEquals(output2, history2)
 
     def test_git_checkout_pull(self):
         self.sh.undeflow_error = True

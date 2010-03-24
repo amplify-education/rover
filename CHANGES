@@ -1,3 +1,6 @@
+0.x
+  - Default checkout directory is now config name instead of current dir
+
 0.3.1
   - Fixed a bug with pulling existing repos
 

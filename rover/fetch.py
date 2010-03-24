@@ -63,7 +63,7 @@ def main():
     parser.add_option('-d','--checkout-dir',
                       action='store',
                       dest='checkout_dir',
-                      default=os.getcwd(),
+                      default=None,
                       help='Root dir, relative to working dir, that Rover will check out to.  Defaults to current directory.')
     parser.add_option('-f','--manifest',
                       action='store',

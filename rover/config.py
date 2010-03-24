@@ -40,20 +40,20 @@ def find_config(config_name):
     """
     # First check for a direct reference to actual filename
     path = os.path.abspath(config_name)
-    if os.path.exists(path):
+    if os.path.exists(path) and os.path.isfile(path):
         return path
     # Check for a direct reference to filename w/o '.csv'
     path = '%s.csv' % path
-    if os.path.exists(path):
+    if os.path.exists(path) and os.path.isfile(path):
         return path
 
     # Check for the file in the default config dir w/ '.csv' ext
     path = os.path.abspath(os.path.join(config_dir, config_name))
-    if os.path.exists(path):
+    if os.path.exists(path) and os.path.isfile(path):
         return path
     # Check for the full in the default dir after appending .csv
     path = '%s.csv' % path
-    if os.path.exists(path):
+    if os.path.exists(path) and os.path.isfile(path):
         return path
     return None
 

@@ -49,14 +49,20 @@ class Rover:
 
 
     def __init__(self, config_names, checkout_mode='preserve'
-                , checkout_dir=os.getcwd()):
+                , checkout_dir=None):
         self.config_names = config_names
         if type(self.config_names) in types.StringTypes:
             self.config_names = [self.config_names]
-        self.config_filename = rover.config.find_config(self.config_names[0])
+        self.config_name = self.config_names[0]
+
+        self.config_filename = rover.config.find_config(self.config_name)
         self.repo_filename = rover.config.find_repos(self.config_filename)
         self.checkout_mode = checkout_mode
-        self.checkout_dir = os.path.abspath(os.path.expanduser(checkout_dir))
+        if checkout_dir:
+            self.checkout_dir = os.path.abspath(
+                            os.path.expanduser(checkout_dir))
+        else:
+            self.checkout_dir = os.path.abspath(self.config_name)
 
         # default values
         self.test_mode = False

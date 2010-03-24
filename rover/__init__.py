@@ -414,7 +414,7 @@ class Rover:
             sys.exit(1)
 
     def run(self):
-        """
+        """Run this instance of rover
         """
         self.load_repos(config.open_repofile(self.repo_filename))
 

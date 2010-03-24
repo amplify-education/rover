@@ -7,6 +7,8 @@
 
   Configuration Changes/Improvements
 ================================================================================
+- Default checkout directory to name of config
+
 - Feature to write a file that will recreate a given checkout state
 
 - The CVS backend does not allow projects to checkout from more than one CVS

@@ -65,7 +65,7 @@ def main():
                       action='store',
                       dest='checkout_dir',
                       default=None,
-                      help='Root dir, relative to working dir, that Rover will check out to.  Defaults to current directory.')
+                      help='Root dir, relative to working dir, that Rover will check out to.  Defaults to the name of the config.')
     parser.add_option('-f','--manifest',
                       action='store',
                       dest='manifest_filename',

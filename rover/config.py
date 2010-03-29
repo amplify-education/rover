@@ -55,6 +55,19 @@ def find_config(config_name):
     path = '%s.csv' % path
     if os.path.exists(path) and os.path.isfile(path):
         return path
+
+    # Check in ROVER_PATH last
+    # This seems like a questionable model, may want to drop it
+    if 'ROVER_PATH' in os.environ.keys():
+        path = os.path.abspath(os.path.join(os.environ['ROVER_PATH'],
+            config_name))
+        if os.path.exists(path) and os.path.isfile(path):
+            return path
+        # Check for ROVER_PATH w/ .csv extension
+        path = '%s.csv' % path
+        if os.path.exists(path) and os.path.isfile(path):
+            return path
+
     return None
 
 

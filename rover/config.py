@@ -61,7 +61,7 @@ def find_config(config_name):
 def find_repos(config_filepath):
     """If given a path to a config file, finds a corresponding repofile
     """
-    if not os.path.exists(config_filepath):
+    if not config_filepath or not os.path.exists(config_filepath):
         return None
     dir, file = os.path.split(config_filepath)
     repo_filename = os.path.join(dir, REPO_FILE_NAME)

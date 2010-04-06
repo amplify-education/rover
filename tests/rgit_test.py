@@ -29,7 +29,7 @@ from mock_shell import MockShell
 
 class GitFactoryTest(unittest.TestCase):
     def setUp(self):
-        self.fact = rgit.GitFactory()
+        self.fact = rgit.GITFactory()
 
     def test_get_rover_items(self):
         items = self.fact.get_rover_items(['git://github.com/wgen/rover.git'

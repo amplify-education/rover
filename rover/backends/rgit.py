@@ -30,7 +30,7 @@ from distutils import version
 
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
-class GitFactory(RoverItemFactory):
+class GITFactory(RoverItemFactory):
     def __init__(self):
         pass
 

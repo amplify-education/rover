@@ -62,7 +62,11 @@ class Rover:
             self.checkout_dir = os.path.abspath(
                             os.path.expanduser(checkout_dir))
         else:
-            self.checkout_dir = os.path.abspath(self.config_name)
+            if self.config_name.endswith('.csv'):
+                checkout_dir = self.config_name[:-4]
+            else:
+                checkout_dir = self.config_name
+            self.checkout_dir = os.path.abspath(os.path.join(os.getcwd(), os.path.basename(checkout_dir)))
 
         # default values
         self.test_mode = False

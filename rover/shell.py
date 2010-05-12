@@ -49,7 +49,7 @@ class Shell(object):
                 break
 
             x = pipe.stdout.readline().strip()
-            if len(x) > 0:
+            if x:
                 print x
                 output.append(x)
 
@@ -58,7 +58,7 @@ class Shell(object):
 
         # if the command ends with a newline, don't
         # include that blank line in the output
-        if len(output) > 0 and output[-1] == '':
+        if output and output[-1] == '':
             output = output[:-1]
 
         # return (exitcode, list of output+error lines)
@@ -79,7 +79,7 @@ class Shell(object):
 
             x = pipe.stdout.readline()
             x = x.strip()
-            if len(x) > 0:
+            if x:
                 output.append(x)
 
         # get any remaining output
@@ -87,7 +87,7 @@ class Shell(object):
 
         # if the command ends with a newline, don't
         # include that blank line in the output
-        if len(output) > 0 and output[-1] == '':
+        if output and output[-1] == '':
             output = output[:-1]
 
         # return (exitcode, list of output+error lines)

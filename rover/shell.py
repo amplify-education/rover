@@ -58,7 +58,7 @@ class Shell(object):
 
         # if the command ends with a newline, don't
         # include that blank line in the output
-        if output and output[-1] == '':
+        if output and output[-1] == '\n':
             output = output[:-1]
 
         # return (exitcode, list of output+error lines)
@@ -87,7 +87,7 @@ class Shell(object):
 
         # if the command ends with a newline, don't
         # include that blank line in the output
-        if output and output[-1] == '':
+        if output and output[-1] == '\n':
             output = output[:-1]
 
         # return (exitcode, list of output+error lines)

@@ -110,12 +110,5 @@ def open_repofile(repo_filename):
 
 def parse_repos(repofile):
     """Get repos from an open file."""
-    repos = []
-    for line in repofile:
-        line = line.strip()
-        if len(line) == 0 or line[0] == '#':
-            # blank or commented line, skip it
-            continue
-        repos.append(RepoInfo(line))
-    return repos
-
+    line_iter = (line.strip() for line in repofile)
+    return [RepoInfo(line) for line in line_iter if line and line[0] != '#']

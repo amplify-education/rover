@@ -72,3 +72,10 @@ class ParseRepoTest(unittest.TestCase):
 
         self.assertEqual(3, len(repos))
 
+        self.assertEqual('github', repos[0].name)
+        self.assertEqual('git', repos[0].vcs)
+        self.assertEqual('git://github.com/', repos[0].uri)
+
+        self.assertEqual('svn://tigris.com/', repos[1].uri)
+        self.assertEqual('sourceforge', repos[2].name)
+

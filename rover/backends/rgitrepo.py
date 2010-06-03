@@ -29,6 +29,9 @@ from distutils.version import LooseVersion
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
 
 
+LATEST_GIT_VERSION = LooseVersion('1.7.1')
+
+
 def _parse_git_version(version):
     match = re.match("^git version (\d+\.\d+\.\d+)", version)
     return LooseVersion(match.group(1))
@@ -55,7 +58,7 @@ class GitConnection(RoverItemFactory):
 
     def get_rover_items(self, config_line):
         repo, branch = config_line[:2]
-        out = [GitRepo(self.name, self.uri, repo, branch)]
+        out = [GitRepo(self.name, self.uri, repo, branch, self.git_version)]
         return out
 
     def _is_alias(self, module):
@@ -76,11 +79,14 @@ class GitConnection(RoverItemFactory):
 
 
 class GitRepo(RoverItem):
-    def __init__(self, conn, uri, repo, treeish):
+    def __init__(self, conn, uri, repo, treeish, git_version=None):
         self.connection = conn
         self.uri = uri
         self.repository = repo
         self.treeish = treeish
+        if git_version is None:
+            git_version = LATEST_GIT_VERSION
+        self._git_version = git_version
 
         # Check for "excludes", because they're not allowed in git
         if ' !' in repo:

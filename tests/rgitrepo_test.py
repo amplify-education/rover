@@ -23,8 +23,23 @@
 
 import unittest
 
+from distutils.version import LooseVersion
 from rover.backends import rgitrepo
 from mock_shell import MockShell
+
+
+class GitVersionTest(unittest.TestCase):
+    def test_release_version(self):
+        self.assertEquals(LooseVersion('1.5.6')
+                , rgitrepo._parse_git_version('git version 1.5.6'))
+
+    def test_intermediate_version(self):
+        self.assertEquals(LooseVersion('1.7.1')
+                , rgitrepo._parse_git_version('git version 1.7.1.231.gd0b16'))
+
+    def test_version_comparison(self):
+        version = rgitrepo._parse_git_version('git version 1.5.6')
+        self.assertTrue(version < LooseVersion('1.6.6'))
 
 
 class GitConnectionTest(unittest.TestCase):

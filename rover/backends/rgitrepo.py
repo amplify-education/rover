@@ -24,8 +24,14 @@
 import os
 import re
 import types
+from distutils.version import LooseVersion
 
 from rover.backends.rover_interface import RoverItemFactory, RoverItem
+
+
+def _parse_git_version(version):
+    match = re.match("^git version (\d+\.\d+\.\d+)", version)
+    return LooseVersion(match.group(1))
 
 
 class GitConnection(RoverItemFactory):

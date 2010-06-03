@@ -117,11 +117,13 @@ class Rover:
     def load_repos(self, repofile):
         """Load factories for each repo defined in the REPOS file
         """
+        sh = rover.shell.Shell()
         repos = config.parse_repos(repofile)
         for rinfo in repos:
             conn = None
             if rinfo.vcs.lower() == 'git':
                 conn = GitConnection(rinfo.name, rinfo.uri)
+                conn.load(sh)
             else:
                 raise Exception("%s is an unsupported vcs" % rinfo.vcs)
             self.factory_map[conn.name] = conn

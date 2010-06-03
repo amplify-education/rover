@@ -38,8 +38,20 @@ class GitConnection(RoverItemFactory):
     def __init__(self, name, uri):
         self.name = name
         self.uri = uri
+        self.git_version = None
         # possibly add assertions on uri format here.
         # not sure if it's needed though.
+
+    def load(self, sh):
+        if sh.run_silent('which git') != 0:
+            raise Exception("Git must be installed for rover to checkout from"
+                    " a git repository")
+
+        version_result, version_output = sh.tee('git --version')
+        if version_result != 0:
+            raise Exception("Failed to get git version")
+        self.git_version = _parse_git_version(version_output[0])
+
 
     def get_rover_items(self, config_line):
         repo, branch = config_line[:2]

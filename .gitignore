@@ -3,3 +3,4 @@
 *.pyc
 build/
 dist/
+rover/version.py

@@ -30,6 +30,7 @@ from optparse import OptionParser
 
 from rover import Rover
 import rover.config
+from rover.version import VERSION
 
 def main():
     parser = OptionParser("""usage: %prog [options] config[@revision]
@@ -38,6 +39,10 @@ def main():
         or path to a given rover configuration file. A revison
         can be added optionally after the '@', and that revision will be
         forced for all modules in that config file.""")
+    parser.add_option('', '--version',
+                      action="store_true",
+                      dest='version',
+                      help='Report the version number and exit')
     parser.add_option('-p', '--preserve-dirs',
                       action="store_true",
                       dest="preserve_dirs",
@@ -82,6 +87,10 @@ def main():
                       default=[],
                       help='Files or directories to check out. Specify full path, eg, `src/test.java`. May specify multiple paths. If specified, only files or directories matched will be checked out.')
     opts, args = parser.parse_args()
+
+    if opts.version:
+        print 'rover version '+ VERSION[1:]
+        exit(0)
 
     if len(args) < 1:
         parser.print_help()

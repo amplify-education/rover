@@ -117,7 +117,10 @@ class GitRepo(RoverItem):
         if sh.exists(git_dir):
             self._pull(sh, full_repo, dest)
         else:
-            self._clone(sh, full_repo, dest, verbose=verbose)
+            if self._before_version('1.6'):
+                self._clone_1_5(sh, full_repo, dest, verbose=verbose)
+            else:
+                self._clone(sh, full_repo, dest, verbose=verbose)
 
     def _clone(self, sh, full_repo, dest, verbose=True, test_mode=False):
         clone = ['git', 'clone', '--branch', self.treeish, full_repo, dest]
@@ -125,6 +128,23 @@ class GitRepo(RoverItem):
             clone.insert(1, '-q')
 
         result = sh.execute(clone, verbose=verbose, test_mode=test_mode)
+
+    def _clone_1_5(self, sh, full_repo, dest, verbose=True, test_mode=False):
+        '''Old version of clone for git < 1.6'''
+        clone = ['git', 'clone', full_repo, dest]
+        if sh.quiet:
+            clone.insert(1, '-q')
+        result = sh.execute(clone, verbose=verbose, test_mode=test_mode)
+        if result != 0:
+            raise Exception("git failure cloning '%s'" % full_repo)
+
+        sh.push_dir(dest)
+        checkout = ['git', 'checkout', self.treeish]
+        if sh.quiet:
+            clone.insert(1, '-q')
+        result = sh.execute(checkout, verbose=verbose, test_mode=test_mode)
+        if result != 0:
+            raise Exception("git failure checking out '%s'" % self.treeish)
 
     def _pull(self, sh, full_repo, dest):
         """For an existing repo, do a git pull
@@ -165,6 +185,10 @@ class GitRepo(RoverItem):
 
     def narrow(self, path):
         return GitItem(path, self.revision)
+
+    def _before_version(self, version):
+        '''Check if the version of git is before the given version'''
+        return self._git_version < LooseVersion(version)
 
     def __repr__(self):
         return ''

@@ -1,3 +1,6 @@
+0.3.4
+  - Fixed how version is generated and reported for Windows or downloads
+
 0.3.3
   - Added backwards compatibility for clone, git version < 1.6
   - Fixed bugs with how default checkout directory is decided

@@ -24,32 +24,11 @@
 from ez_setup import use_setuptools
 use_setuptools()
 
-import os
-import re
-import subprocess
 
 from setuptools import setup, find_packages
 from textwrap import dedent
-
-
-def make_version():
-    '''Write the version (as identified by git) to a file called version.py
-
-    This version.py module will then be used to report the version.'''
-    src_dir = os.path.dirname(__file__)
-    version_path = os.path.join(src_dir, 'rover', 'version.py')
-    git_describe = "'`git describe --match v*`'"
-    cmd = "echo \"VERSION = %s\" > %s" % (git_describe, version_path)
-    subprocess.call(cmd, shell=True)
-
-def major_version(version):
-    '''Parse the major version from the version string'''
-    match = re.match("^v(\d+\.\d+)", version)
-    return match.group(1)
-
-make_version()
-
 import rover.version
+
 
 setup(
         name = "Rover",

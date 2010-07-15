@@ -30,9 +30,13 @@ from textwrap import dedent
 import rover.version
 
 
+# make the gitversion file if possible
+rover.version.make_gitversion()
+
+
 setup(
         name = "Rover",
-        version = major_version(rover.version.VERSION),
+        version = rover.version.major(),
         description="Automatically retrieves projects from various VCS",
         long_description = dedent("""\
                 Rover simplifies the task of creating a project that draws

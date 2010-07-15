@@ -3,7 +3,7 @@ import re
 import subprocess
 
 # The base version to use when installing from zip/tar file and not git repo
-BASE_VERSION = 'v0.3.4'
+BASE_VERSION = 'v0.3.3'
 
 
 def major():

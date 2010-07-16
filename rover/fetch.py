@@ -30,7 +30,7 @@ from optparse import OptionParser
 
 from rover import Rover
 import rover.config
-from rover.version import VERSION
+from rover.version import version
 
 def main():
     parser = OptionParser("""usage: %prog [options] config[@revision]
@@ -89,7 +89,7 @@ def main():
     opts, args = parser.parse_args()
 
     if opts.version:
-        print 'rover version '+ VERSION[1:]
+        print 'rover version '+ version()[1:]
         exit(0)
 
     if len(args) < 1:

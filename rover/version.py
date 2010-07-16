@@ -34,8 +34,9 @@ def make_gitversion():
     try:
         proc = subprocess.Popen(git_describe, shell=True, stdout=subprocess.PIPE)
         stdout, stderr = proc.communicate()
+        output = "VERSION = '%s'\n" % stdout.rstrip()
         with open(version_path, 'w') as gitver:
-            gitver.write(stdout)
+            gitver.write(output)
     except:
         # do nothing, assume it's b/c this is not a git repo
         pass

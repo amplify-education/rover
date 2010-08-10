@@ -90,7 +90,7 @@ def main():
 
     if opts.version:
         print 'rover version '+ version()[1:]
-        exit(0)
+        sys.exit(0)
 
     if len(args) < 1:
         parser.print_help()
